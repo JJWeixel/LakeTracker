@@ -34,7 +34,7 @@ const Home = () => {
                             <Label htmlFor="unit-toggle">Celsius</Label>
                             <Switch 
                             id="unit-toggle"
-                            className="z=1"/>
+                            className="z-1"/>
                         </div>
                         <div className="flex flex-row items-center justify-between pl-4">
                             <Label htmlFor="theme-toggle">Toggle dark mode</Label>
@@ -59,7 +59,7 @@ const Home = () => {
                         <div className="h-40 w-1/2 flex flex-row border bg-accent rounded-2xl justify-between px-8 gap-8 items-center">
                             <div className="text-3xl">Compass Bar</div>
                             <div className="h-full w-40 flex flex-col items-center justify-between py-4">
-                                <div className="text-3xl">Wind</div>
+                                <div className="text-3xl opacity-40">Wind</div>
                                 <Separator />
                                 <div className="text-2xl">15-20 Knots</div>
                                 <Separator />
@@ -69,7 +69,7 @@ const Home = () => {
                         <div className="h-40 w-1/2 flex flex-row border bg-accent rounded-2xl justify-between px-8 gap-8 items-center">
                             <div className="text-3xl">Design Element</div>
                             <div className="h-full w-40 flex flex-col items-center justify-between py-4">
-                                <div className="text-3xl">Waves</div>
+                                <div className="text-3xl opacity-40">Waves</div>
                                 <Separator />
                                 <div className="text-2xl">1-3 feet</div>
                             </div>
