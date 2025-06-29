@@ -29,7 +29,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Options</SidebarGroupLabel>
           <SidebarGroupAction asChild>
-            <Button variant="ghost" className="size-5" onClick={handleThemeToggle}>
+            <Button variant="ghost" className="size-5 shadow-sm" onClick={handleThemeToggle}>
               {
                 theme === "light" ?
                 <MoonIcon /> :
@@ -40,7 +40,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <ToggleGroup type="single" className="flex w-full py-2" variant="outline">
+                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline">
                   <ToggleGroupItem value="fahrenheit">
                     &deg;F
                   </ToggleGroupItem>
@@ -50,7 +50,7 @@ export function AppSidebar() {
                 </ToggleGroup>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ToggleGroup type="single" className="flex w-full py-2" variant="outline">
+                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline">
                   <ToggleGroupItem value="imperial">
                     Imperial
                   </ToggleGroupItem>
