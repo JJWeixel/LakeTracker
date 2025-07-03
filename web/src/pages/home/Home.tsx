@@ -8,6 +8,7 @@ import { AppSidebar } from "./components/AppSidebar"
 import { Compass } from "./components/Compass"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import DataChart from "./components/DataChart"
 
   
 function Home() {
@@ -99,27 +100,7 @@ function Home() {
                             </CardContent>
                         </Card>
                     </div>
-
-                    <Card className="w-7/8 h-80">
-                        <CardHeader>
-                            <CardTitle className="text-3xl">History</CardTitle>
-                            <CardDescription>Measurements over the last 7 days</CardDescription>
-                            <CardAction>
-                                <ToggleGroup
-                                    type="single"
-                                    variant="outline"
-                                    className="*:data-[slot=toggle-group-item]:!px-4"
-                                >
-                                    <ToggleGroupItem value="temp">Temperature</ToggleGroupItem>
-                                    <ToggleGroupItem value="wind">Wind speed</ToggleGroupItem>
-                                    <ToggleGroupItem value="waves">Wave height</ToggleGroupItem>
-                                </ToggleGroup>
-                            </CardAction>
-                        </CardHeader>
-                        <CardContent>
-
-                        </CardContent>
-                    </Card>
+                    <DataChart />
                 </div>
             </main>
         </SidebarProvider>

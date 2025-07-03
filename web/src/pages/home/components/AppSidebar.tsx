@@ -25,7 +25,7 @@ export function AppSidebar() {
   }
   return (
     <Sidebar variant="floating">
-      <SidebarContent>
+      <SidebarContent className="bg-card">
         <SidebarGroup>
           <SidebarGroupLabel>Options</SidebarGroupLabel>
           <SidebarGroupAction asChild>
