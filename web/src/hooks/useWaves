@@ -1,0 +1,60 @@
+export type WaveData = {
+  datetime: string;
+  WVHT: number | null; // Significant wave height
+  SwH: number | null;  // Swell height
+  SwP: number | null;  // Swell period
+  WWH: number | null;  // Wind wave height
+  WWP: number | null;  // Wind wave period
+  SwD: string;
+  WWD: string;
+  Steepness: string;
+  APD: number | null;
+  MWD: number | null;
+};
+
+import useHttp from "./useHttp";
+
+const useWaves = () => {
+  const { getRaw } = useHttp(); // assumes you have or will add a `getRaw` for raw text
+
+  const getWaveData = async (): Promise<WaveData[]> => {
+    const txt = await getRaw(
+      "https://www.ndbc.noaa.gov/data/realtime2/45005.txt" // sample buoy URL
+    );
+
+    const lines = txt.split("\n");
+    const parsed: WaveData[] = [];
+
+    for (const line of lines) {
+      if (line.startsWith("#") || line.trim() === "") continue;
+
+      const parts = line.trim().split(/\s+/);
+      if (parts.length < 16) continue;
+
+      const [YY, MM, DD, hh, mm, WVHT, SwH, SwP, WWH, WWP, SwD, WWD, Steepness, APD, MWD] = parts;
+
+      const toNum = (val: string) =>
+        val === "MM" || val === "N/A" || val === undefined ? null : parseFloat(val);
+
+      parsed.push({
+        datetime: `${YY}-${MM}-${DD} ${hh}:${mm}`,
+        WVHT: toNum(WVHT),
+        SwH: toNum(SwH),
+        SwP: toNum(SwP),
+        WWH: toNum(WWH),
+        WWP: toNum(WWP),
+        SwD,
+        WWD,
+        Steepness,
+        APD: toNum(APD),
+        MWD: toNum(MWD),
+      });
+    }
+
+    return parsed;
+  };
+
+  return { getWaveData };
+};
+
+export default useWaves;
