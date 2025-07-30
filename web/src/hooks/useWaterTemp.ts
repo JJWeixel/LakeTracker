@@ -14,7 +14,7 @@ export type Data = {
 
 const useWaterTemp = () => {
     const { getOne } = useHttp();
-    const getWaterTemp = async() => getOne<WeatherResponse>('datagetter?date=today&station=9063063&product=water_temperature&time_zone=lst_ldt&interval=h&units=english&application=DataAPI_Sample&format=json')
+    const getWaterTemp = async() => getOne<WeatherResponse>('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9063063&product=water_temperature&time_zone=lst_ldt&interval=h&units=english&application=DataAPI_Sample&format=json')
     return { getWaterTemp };
 }
 

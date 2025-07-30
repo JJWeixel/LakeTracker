@@ -43,7 +43,10 @@ const WindCard : React.FC = () => {
                     <div className="flex flex-col items-center py-4 justify-start text-4xl gap-4">
                         <div>{ data?.data[0].s } Knots</div>
                         <Separator />
-                        <div className="text-2xl">{ windDirectionMap[data?.data[0].dr as keyof typeof windDirectionMap] || data?.data[0].dr }</div>
+                        <div className="flex flex-col justify-start items-center">
+                            <div>{ data?.data[0].d }&deg;</div>
+                            <div className="text-2xl opacity-50">{ windDirectionMap[data?.data[0].dr as keyof typeof windDirectionMap] || data?.data[0].dr }</div>
+                        </div>
                     </div>
                 </div>
             </CardContent>
