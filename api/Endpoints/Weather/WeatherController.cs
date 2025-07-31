@@ -23,7 +23,7 @@ public class WeatherController : BaseApiController
         }
         catch (Exception ex)
         {
-            HandleException(ex);
+            return HandleException(ex);
         }
     }
     
