@@ -1,11 +1,17 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace api.Endpoints.Weather.RequestResponse.NoaaWind;
 
 public class NoaaWeatherResponseDataWind
 {
+    private const string DateFormat = "yyyy-MM-dd HH:mm";
+
     [JsonPropertyName("t")]
-    public DateTime Time { get; set; }
+    public string TimeRaw { get; set; }
+
+    [JsonIgnore]
+    public DateTime Time => DateTime.ParseExact(TimeRaw, DateFormat, CultureInfo.InvariantCulture);
     [JsonPropertyName("s")]
     public double Speed { get; set; }
     [JsonPropertyName("d")]

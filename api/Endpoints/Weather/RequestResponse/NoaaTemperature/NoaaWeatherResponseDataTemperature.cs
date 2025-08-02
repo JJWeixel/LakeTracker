@@ -1,11 +1,17 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 
 public class NoaaWeatherResponseDataTemperature
 {
+    private const string DateFormat = "yyyy-MM-dd HH:mm";
+
     [JsonPropertyName("t")]
-    public DateTime Time { get; set; }
+    public string TimeRaw { get; set; }
+
+    [JsonIgnore]
+    public DateTime Time => DateTime.ParseExact(TimeRaw, DateFormat, CultureInfo.InvariantCulture);
     [JsonPropertyName("v")]
     public double Value { get; set; }
     [JsonPropertyName("Flags")]

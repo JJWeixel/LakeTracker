@@ -17,36 +17,36 @@ public class WeatherServices : BaseService
     {
     }
 
-    public async Task<string> GetWeather()
+    public async Task<ICollection<Domain.Weather>> GetWeather()
     {
         var NOAAWeatherClient = new HttpClient();
-        NOAAWeatherClient.BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter");
+        NOAAWeatherClient.BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter/");
 
         var waterRequest = await NOAAWeatherClient.GetAsync(
-            "?date=today&station=9063063&product=water_temperature&time_zone=LST_LTD&interval=h&units=english&application=DataAPI_Sample&format=json");
+            "?date=today&station=9063063&product=water_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
         
         if (!waterRequest.IsSuccessStatusCode)
         {
-            Logger.LogError("Failed to fetch weather data from NOAA API.");
-            return "Error fetching weather data.";
+            Logger.LogError("Failed to fetch water data from NOAA API.");
+            return null;
         }
         
         var windRequest = await NOAAWeatherClient.GetAsync(
-            "?date=today&station=9063063&product=wind&time_zone=LST_LTD&interval=h&units=english&application=DataAPI_Sample&format=json");
+            "?date=today&station=9063063&product=wind&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
         
         if (!windRequest.IsSuccessStatusCode)
         {
             Logger.LogError("Failed to fetch wind data from NOAA API.");
-            return "Error fetching wind data.";
+            return null;
         }
         
         var temperatureRequest = await NOAAWeatherClient.GetAsync(
-            "?date=today&station=9063063&product=air_temperature&time_zone=LST_LTD&interval=h&units=english&application=DataAPI_Sample&format=json");
+            "?date=today&station=9063063&product=air_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
         
         if (!temperatureRequest.IsSuccessStatusCode)
         {
             Logger.LogError("Failed to fetch air temperature data from NOAA API.");
-            return "Error fetching air temperature data.";
+            return null;
         }
         
         var waterJson = await waterRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseWater>();
@@ -85,6 +85,7 @@ public class WeatherServices : BaseService
             });
             
         }
-        
+
+        return weatherData;
     }
 }

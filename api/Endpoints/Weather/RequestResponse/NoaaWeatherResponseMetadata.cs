@@ -9,7 +9,7 @@ public class NoaaWeatherResponseMetadata
     [JsonPropertyName("name")]
     public string StationName { get; set; }
     [JsonPropertyName("lat")]
-    public int Latitude { get; set; }
+    public double Latitude { get; set; }
     [JsonPropertyName("lon")]
-    public int Longitude { get; set; }
+    public double Longitude { get; set; }
 }
