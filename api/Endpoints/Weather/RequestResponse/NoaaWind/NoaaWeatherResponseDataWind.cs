@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace api.Endpoints.Weather.RequestResponse.NoaaTemperature;
+namespace api.Endpoints.Weather.RequestResponse.NoaaWind;
 
 public class NoaaWeatherResponseDataWind
 {

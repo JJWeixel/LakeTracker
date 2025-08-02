@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace api.Endpoints.Weather.RequestResponse.NoaaAir;
+namespace api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 
-public class NoaaWeatherResponseDataAir
+public class NoaaWeatherResponseDataTemperature
 {
     [JsonPropertyName("t")]
     public DateTime Time { get; set; }

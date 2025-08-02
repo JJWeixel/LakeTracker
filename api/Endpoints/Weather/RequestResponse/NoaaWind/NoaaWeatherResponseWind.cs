@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
 
-namespace api.Endpoints.Weather.RequestResponse.NoaaAir;
+namespace api.Endpoints.Weather.RequestResponse.NoaaWind;
 
-public class NoaaWeatherResponseAir
+public class NoaaWeatherResponseWind
 {
     [JsonPropertyName("metadata")]
     public NoaaWeatherResponseMetadata Metadata { get; set; }
     [JsonPropertyName("data")]
-    public ICollection<NoaaWeatherResponseDataAir> Data { get; set; }
+    public ICollection<NoaaWeatherResponseDataWind> Data { get; set; }
 }

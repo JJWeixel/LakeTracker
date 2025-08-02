@@ -2,6 +2,7 @@ using System.Security.Claims;
 using api.Data;
 using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 using api.Endpoints.Weather.RequestResponse.NoaaWater;
+using api.Endpoints.Weather.RequestResponse.NoaaWind;
 
 namespace api.Endpoints.Weather;
 
@@ -48,17 +49,42 @@ public class WeatherServices : BaseService
             return "Error fetching air temperature data.";
         }
         
-        var waterData = await waterRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseWater>();
-        var windData = await windRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseWind>();
-        var temperatureData = await temperatureRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseTemperature>();
-        
-        
-        
-        
+        var waterJson = await waterRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseWater>();
+        var waterData = waterJson.Data.ToList();
+        var windJson = await windRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseWind>();
+        var windData = windJson.Data.ToList();
+        var temperatureJson = await temperatureRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseTemperature>();
+        var temperatureData = temperatureJson.Data.ToList();
+
+        var weatherData = new List<Domain.Weather>();
+
+        for (int i = 0; i < waterData.Count; i++)
+        {
+            if (i >= windData.Count || i >= temperatureData.Count)
+            {
+                Logger.LogWarning("Data mismatch: Not enough wind or temperature data for the water data available.");
+                break;
+            }
+            var water = waterData[i];
+            var wind = windData[i];
+            var temperature = temperatureData[i];
+
+            if (water.Time - temperature.Time > TimeSpan.FromHours(1) || water.Time - wind.Time > TimeSpan.FromHours(1))
+            {
+                Logger.LogError("Data mismatch: Water, wind, and temperature data timestamps do not align.");
+                return null;
+            }
+            weatherData.Add(new Domain.Weather
+            {
+                AirTemperature = temperature.Value,
+                WaterTemperature = water.Value,
+                WindSpeed = wind.Speed,
+                WindDirection = wind.Direction,
+                WindDirectionReadable = wind.DirectionReadable,
+                GustSpeed = wind.Gust,
+            });
+            
+        }
         
     }
-}
-
-public class NoaaWeatherResponseTemperature
-{
 }
