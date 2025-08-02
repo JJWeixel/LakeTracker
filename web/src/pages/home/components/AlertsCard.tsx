@@ -84,7 +84,7 @@ const AlertsCard : React.FC = () => {
                     </Collapsible>
                 ))
                 ) : (
-                <div>No alerts</div>
+                <div className="text-3xl">No alerts</div>
                 )}
             </CardContent>
         </Card>

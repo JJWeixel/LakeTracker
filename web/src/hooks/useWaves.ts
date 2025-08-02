@@ -6,16 +6,16 @@ export type WeatherResponse = {
 
 export type Data = {
   datetime: string;
-  WDIR: number | null; // Significant wave height
-  WSPD: number | null;  // Swell height
-  GST: number | null;  // Swell period
-  WVHT: number | null;  // Wind wave height
-  DPD: number | null;  // Wind wave period
-  APD: number | null;
-  MWD: number | null;
+  WDIR: number | null; // Wind direction
+  WSPD: number | null;  // Wind speed
+  GST: number | null;  // Gust speed
+  WVHT: number | null;  // Significant wave height
+  DPD: number | null;  // Dominant wave period
+  APD: number | null;  // Average wave period
+  MWD: number | null;  // Mean wave direction
   PRES: number | null; // Pressure
-  ATMP: number | null;
-  WTMP: number | null;
+  ATMP: number | null;  // Air temperature
+  WTMP: number | null;  // Water temperature
   DEWP: number | null; // Dew point
   VIS: number | null; // Visibility
   PTDY: number | null; // Pressure tendency
