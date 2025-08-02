@@ -14,7 +14,6 @@ public class WeatherServices : BaseService
     {
     }
 
-    
     public string GetWeather()
     {
         // Simulate fetching weather data
