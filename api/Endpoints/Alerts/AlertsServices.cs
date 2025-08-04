@@ -22,6 +22,8 @@ public class AlertsServices : BaseService
 
         var alertsClient = new HttpClient();
         alertsClient.BaseAddress = new Uri("https://api.weather.gov/alerts/active/");
+        alertsClient.DefaultRequestHeaders.Add("User-Agent", "LakeTracker (weixel.12@osu.edu)");
+        alertsClient.DefaultRequestHeaders.Add("Accept", "application/ld+json");
 
         var alertsRequest = await alertsClient.GetAsync("zone/OHC035");
 
