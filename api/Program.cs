@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using api.Data;
 using api.Endpoints.Weather;
+using api.Endpoints.Alerts;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
 
@@ -46,6 +47,7 @@ namespace api
         private static void AddServices(WebApplicationBuilder builder)
         {
             builder.Services.AddScoped<WeatherServices>();
+            builder.Services.AddScoped<AlertsServices>();
         }
 
         private static void AddControllers(WebApplicationBuilder builder)

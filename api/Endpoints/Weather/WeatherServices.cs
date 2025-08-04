@@ -3,6 +3,7 @@ using api.Data;
 using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 using api.Endpoints.Weather.RequestResponse.NoaaWater;
 using api.Endpoints.Weather.RequestResponse.NoaaWind;
+using api.Endpoints.Weather.RequestResponse.NdbcWaves;
 
 namespace api.Endpoints.Weather;
 
@@ -21,6 +22,8 @@ public class WeatherServices : BaseService
     {
         var NOAAWeatherClient = new HttpClient();
         NOAAWeatherClient.BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter/");
+        var NDBCWeatherClient = new HttpClient();
+        NDBCWeatherClient.BaseAddress = new Uri("https://www.ndbc.noaa.gov/data/realtime2/");
 
         var waterRequest = await NOAAWeatherClient.GetAsync(
             "?date=today&station=9063063&product=water_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
@@ -48,6 +51,15 @@ public class WeatherServices : BaseService
             Logger.LogError("Failed to fetch air temperature data from NOAA API.");
             return null;
         }
+
+        var wavesRequest = await NDBCWeatherClient.GetAsync(
+            "45005.txt");
+        
+        if (!wavesRequest.IsSuccessStatusCode)
+        {
+            Logger.LogError("Failed to fetch air wave data from NDBC API.");
+            return null;
+        }
         
         var waterJson = await waterRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseWater>();
         var waterData = waterJson.Data.ToList();
@@ -55,6 +67,7 @@ public class WeatherServices : BaseService
         var windData = windJson.Data.ToList();
         var temperatureJson = await temperatureRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseTemperature>();
         var temperatureData = temperatureJson.Data.ToList();
+        var allWaves = NdbcWaveParser.ParseAllValid(wavesRequest.Content.ReadAsStringAsync().Result);
 
         var weatherData = new List<Domain.Weather>();
 
@@ -68,6 +81,8 @@ public class WeatherServices : BaseService
             var water = waterData[i];
             var wind = windData[i];
             var temperature = temperatureData[i];
+            var wave = allWaves.FirstOrDefault(w =>
+                Math.Abs((w.Timestamp - water.Time).TotalMinutes) <= 60);
 
             if (water.Time - temperature.Time > TimeSpan.FromHours(1) || water.Time - wind.Time > TimeSpan.FromHours(1))
             {
