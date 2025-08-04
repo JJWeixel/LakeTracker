@@ -71,7 +71,7 @@ public class WeatherServices : BaseService
 
         var weatherData = new List<Domain.Weather>();
 
-        for (int i = 0; i < waterData.Count; i++)
+        for (int i = waterData.Count - 1; i >= 0; i--)
         {
             if (i >= windData.Count || i >= temperatureData.Count)
             {
@@ -81,8 +81,14 @@ public class WeatherServices : BaseService
             var water = waterData[i];
             var wind = windData[i];
             var temperature = temperatureData[i];
-            var wave = allWaves.FirstOrDefault(w =>
-                Math.Abs((w.Timestamp - water.Time).TotalMinutes) <= 60);
+            var waveWVHT = allWaves
+                .Where(w => w.WaveHeight > 0 && w.Timestamp <= water.Time)
+                .FirstOrDefault();
+            var waveDPD = allWaves
+                .Where(w => w.DominantWavePeriod > 0 && w.Timestamp <= water.Time)
+                .FirstOrDefault();
+
+            Console.WriteLine($"Time for water: {water.Time}, wind: {wind.Time}, temperature: {temperature.Time}, waves: {waveWVHT?.Timestamp}, {waveDPD?.Timestamp}");
 
             if (water.Time - temperature.Time > TimeSpan.FromHours(1) || water.Time - wind.Time > TimeSpan.FromHours(1))
             {
@@ -91,12 +97,15 @@ public class WeatherServices : BaseService
             }
             weatherData.Add(new Domain.Weather
             {
+                Time = wind.Time,
                 AirTemperature = temperature.Value,
                 WaterTemperature = water.Value,
                 WindSpeed = wind.Speed,
                 WindDirection = wind.Direction,
                 WindDirectionReadable = wind.DirectionReadable,
                 GustSpeed = wind.Gust,
+                WaveHeight = waveWVHT?.WaveHeight ?? 0,
+                DominantWavePeriod = waveDPD?.DominantWavePeriod ?? 0,
             });
             
         }

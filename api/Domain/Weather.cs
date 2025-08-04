@@ -2,6 +2,7 @@ namespace api.Domain;
 
 public class Weather
 {
+    public DateTime Time { get; set; }
     public double AirTemperature { get; set; }
     public double WaterTemperature { get; set; }
     public double WindSpeed { get; set; }
@@ -10,5 +11,4 @@ public class Weather
     public double GustSpeed { get; set; }
     public double WaveHeight { get; set; }
     public double DominantWavePeriod { get; set; }
-    public double Visibility { get; set; }
 }

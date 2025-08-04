@@ -1,42 +1,18 @@
 import useHttp from "./useHttp";
 
-export type WeatherAlertResponse = {
-    type: string;
-    title: string;
-    updated: string;
-    features: WeatherAlert[];
-};
-
-export type WeatherAlert = {
-    id: string;
-    type: string;
-    geometry: null;
-    properties: AlertProperties;
-};
-
-export type AlertProperties = {
-    id: string;
-    areaDesc: string;
+export type AlertResponse = {
     event: string;
-    severity: string;
-    certainty: string;
-    urgency: string;
-    headline: string;
-    description: string;
-    instruction: string;
-    sent: string;
     effective: string;
     onset: string;
     ends: string;
-    status: string;
+    severity: string;
+    description: string;
+    instruction: string;
 };
 
 const useAlerts = () => {
     const { getOne } = useHttp();
-    const getAlerts = async() => {
-        const result = await getOne<WeatherAlertResponse>('https://api.weather.gov/alerts/active/zone/OHC035');
-        return result?.features || [];
-    }
+    const getAlerts = async() => getOne<AlertResponse[]>('https://localhost:7249/alerts');
     return { getAlerts };
 }
 

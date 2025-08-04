@@ -1,15 +1,15 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Separator } from "@radix-ui/react-separator"
 import Compass from "./Compass"
-import useWind from "@/hooks/useWind";
 import { useQuery } from "@tanstack/react-query";
+import useWeather from "@/hooks/useWeather";
 
 const WindCard : React.FC = () => {
 
-    const { getWindTemp } = useWind();
+    const { getWeather } = useWeather();
     const { data } = useQuery({
-        queryKey: ["windTemp"],
-        queryFn: getWindTemp
+        queryKey: ["weather"],
+        queryFn: getWeather
     });
 
     const windDirectionMap: { [key: string]: string } = {
@@ -41,11 +41,11 @@ const WindCard : React.FC = () => {
                 <div className="h-full flex flex-row gap-8 justify-between px-8 items-center">
                     <Compass />
                     <div className="flex flex-col items-center py-4 justify-start text-4xl gap-4">
-                        <div>{ data?.data[0].s } Knots</div>
+                        <div>{ data?.[0].windSpeed } Knots</div>
                         <Separator />
                         <div className="flex flex-col justify-start items-center">
-                            <div>{ data?.data[0].d }&deg;</div>
-                            <div className="text-2xl opacity-50">{ windDirectionMap[data?.data[0].dr as keyof typeof windDirectionMap] || data?.data[0].dr }</div>
+                            <div>{ data?.[0].windDirection }&deg;</div>
+                            <div className="text-2xl opacity-50">{ windDirectionMap[data?.[0].windDirectionReadable as keyof typeof windDirectionMap] || data?.[0].windDirectionReadable }</div>
                         </div>
                     </div>
                 </div>

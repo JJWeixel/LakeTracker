@@ -1,14 +1,14 @@
-import useWind from "@/hooks/useWind";
+import useWeather from "@/hooks/useWeather";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, MousePointer2 } from "lucide-react";
+import { MousePointer2 } from "lucide-react";
 
 const Compass : React.FC = () => {
     
     const tickMarks = Array.from({ length: 36 });
-    const { getWindTemp } = useWind();
+    const { getWeather } = useWeather();
     const { data } = useQuery({
-        queryKey: ["windTemp"],
-        queryFn: getWindTemp
+        queryKey: ["weather"],
+        queryFn: getWeather
     });
 
     return (
@@ -19,7 +19,7 @@ const Compass : React.FC = () => {
             <div className="translate-x-[55px] absolute font-bold">E</div>
             <MousePointer2 
                 className="absolute size-10 fill-gray-300"
-                style={{ transform: `rotate(${Math.round(data?.data[0]?.d ?? 0) + 45}deg)` }}
+                style={{ transform: `rotate(${Math.round(data?.[0].windDirection ?? 0) + 45}deg)` }}
                 color="#000000"
             />
 

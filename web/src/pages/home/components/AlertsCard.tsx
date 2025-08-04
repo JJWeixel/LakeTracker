@@ -36,7 +36,7 @@ const AlertsCard : React.FC = () => {
                             className="flex flex-row gap-4 justify-start items-center mb-2"
                         >
                             <TriangleAlert className="size-12" color="#ed2939" />
-                            <div className="text-3xl line-clamp-1">{ alert.properties.event }</div>
+                            <div className="text-3xl line-clamp-1">{ alert.event }</div>
                             <CollapsibleTrigger asChild>
                                 <Button variant="ghost" size="icon" className="px-2 opacity-50">
                                 {openStates[idx] ? (
@@ -52,33 +52,33 @@ const AlertsCard : React.FC = () => {
                         <CollapsibleContent className="flex flex-col gap-2 text-sm pl-[50px]">
                             <div>
                                 <strong>Effective:</strong>{" "}
-                                    { new Date(alert.properties.effective).toLocaleString("en-US", {
+                                    { new Date(alert.effective).toLocaleString("en-US", {
                                         dateStyle: "long",
                                         timeStyle: "short",
                                     }) }
                             </div>
                             <div>
                                 <strong>Onset:</strong>{" "}
-                                    { new Date(alert.properties.onset).toLocaleString("en-US", {
+                                    { new Date(alert.onset).toLocaleString("en-US", {
                                         dateStyle: "long",
                                         timeStyle: "short",
                                     }) }
                             </div>
                             <div>
                                 <strong>Ends:</strong>{" "}
-                                    { new Date(alert.properties.ends).toLocaleString("en-US", {
+                                    { new Date(alert.ends).toLocaleString("en-US", {
                                         dateStyle: "long",
                                         timeStyle: "short",
                                     }) }
                             </div>
                             <div>
-                                <strong>Severity:</strong> { alert.properties.severity }
+                                <strong>Severity:</strong> { alert.severity }
                             </div>
                             <div>
-                                <strong>Description:</strong> { alert.properties.description }
+                                <strong>Description:</strong> { alert.description }
                             </div>
                             <div>
-                                <strong>Instruction:</strong> { alert.properties.instruction }
+                                <strong>Instruction:</strong> { alert.instruction }
                             </div>
                         </CollapsibleContent>
                     </Collapsible>

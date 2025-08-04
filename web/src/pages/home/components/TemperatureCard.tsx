@@ -1,17 +1,16 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { TemperatureSlider } from "@/components/ui/temperature-slider"
-import useWaterTemp from "@/hooks/useWaterTemp";
+import useWeather from "@/hooks/useWeather";
 import { Separator } from "@radix-ui/react-separator"
 import { useQuery } from "@tanstack/react-query";
 
 const TemperatureCard : React.FC = () => {
     
-    const { getWaterTemp } = useWaterTemp();
+    const { getWeather } = useWeather();
     const { data } = useQuery({
-        queryKey: ["waterTemp"],
-        queryFn: getWaterTemp
+        queryKey: ["weather"],
+        queryFn: getWeather
     });
-
 
     return (
         <Card className="w-7/8">
@@ -21,7 +20,7 @@ const TemperatureCard : React.FC = () => {
             </CardHeader>
             <CardContent>
                 <div className="flex flex-row gap-4 justify-between items-center px-8">
-                    <div>{ Math.round(data?.data[0].v ?? 0) }&deg;F</div>
+                    <div>{ Math.round(data?.[0].waterTemperature ?? 0) }&deg;F</div>
                     <div className="flex flex-col items-center text-gray-500">
                         <div className="text-base">Prev 7 Days</div>
                         <Separator />
