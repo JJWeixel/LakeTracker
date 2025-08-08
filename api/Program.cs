@@ -21,6 +21,7 @@ namespace api
             AddSwaggerGen(builder);
             AddDbContext(builder);
             AddServices(builder);
+            AddRedis(builder);
             AddControllers(builder);
             AddCurrentUser(builder);
             AddCorsPolicy(builder);
