@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using api.Data;
 using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 using api.Endpoints.Weather.RequestResponse.NoaaWater;
@@ -13,18 +14,48 @@ namespace api.Endpoints.Weather;
 public class WeatherServices : BaseService
 {
     private readonly IDatabase _redisDatabase;
+    private readonly JsonSerializerOptions _jsonOptions;
 
     public WeatherServices(
     LakeTrackerContext context,
+    IConnectionMultiplexer redis,
     ILogger<WeatherServices> logger,
     ClaimsPrincipal principal,
-    IConfiguration config)
-    : base(context, logger, principal, config)
+    IConfiguration config, IDatabase redisDatabase)
+    : base(context, redis, logger, principal, config)
     {
+        _redisDatabase = redisDatabase;
+        _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        };
+    }
+    private string stationId = "9063063";
+    
+    public async Task<Domain.Weather?> GetWeatherFromCache()
+    {
+        var key = $"weather:{stationId}";
+        var cachedWeather = await _redisDatabase.StringGetAsync(key);
+        if (cachedWeather.IsNullOrEmpty)
+        {
+            Logger.LogInformation("No cached weather data found.");
+            return null;
+        }
+        var weather = JsonSerializer.Deserialize<Domain.Weather>(cachedWeather.ToString(), _jsonOptions);
+        return weather;
     }
 
     public async Task<ICollection<Domain.Weather>> GetWeather()
     {
+        
+        var cachedWeather = await GetWeatherFromCache();
+        if (cachedWeather != null)
+        {
+            Logger.LogInformation("Returning cached weather data.");
+            return new List<Domain.Weather> { cachedWeather };
+        }
+        
         var NOAAWeatherClient = new HttpClient();
         NOAAWeatherClient.BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter/");
         var NDBCWeatherClient = new HttpClient();
@@ -112,8 +143,12 @@ public class WeatherServices : BaseService
                 WaveHeight = waveWVHT?.WaveHeight ?? 0,
                 DominantWavePeriod = waveDPD?.DominantWavePeriod ?? 0,
             });
-            
         }
+
+        var weather = weatherData.FirstOrDefault() ?? throw new Exception("No data");
+        var key = $"weather:{weather.Station}";
+        var serialized = JsonSerializer.Serialize(weather, _jsonOptions);
+        await _redisDatabase.StringSetAsync(key, serialized, TimeSpan.FromMinutes(60));
 
         return weatherData;
     }
