@@ -21,10 +21,10 @@ public class WeatherServices : BaseService
     IConnectionMultiplexer redis,
     ILogger<WeatherServices> logger,
     ClaimsPrincipal principal,
-    IConfiguration config, IDatabase redisDatabase)
+    IConfiguration config)
     : base(context, redis, logger, principal, config)
     {
-        _redisDatabase = redisDatabase;
+        _redisDatabase = redis.GetDatabase();
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
