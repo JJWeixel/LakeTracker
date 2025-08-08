@@ -56,13 +56,9 @@ namespace api
 
         private static void AddRedis(WebApplicationBuilder builder)
         {
-            ConfigurationOptions conf = new ConfigurationOptions {
-                EndPoints = { "" },
-                Password = "",
-                Ssl = true,
-            };
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(conf);
-            IDatabase db = redis.GetDatabase();
+
+            var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")); 
+            var db = redis.GetDatabase();
             builder.Services.AddScoped(sp => db);
         }
 
