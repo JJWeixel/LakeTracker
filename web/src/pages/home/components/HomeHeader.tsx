@@ -32,7 +32,7 @@ const regions = [
 
 const HomeHeader = () => {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("");
+    const [value, setValue] = React.useState("cleveland");
     return (
         <div className="z-[1001] gap-8 sticky flex top-4 left-0 right-0 mx-auto h-24 w-5/6 items-center rounded-2xl px-8 p border bg-card/50 backdrop-blur-xl drop-shadow-sm">
             <Waves className="size-14 overflow-hidden" />
@@ -58,7 +58,7 @@ const HomeHeader = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-[200px] p-0 z-[2000]">
                         <Command>
-                        <CommandInput placeholder="Search region..." className="h-9" />
+                        <CommandInput placeholder="Search region..." className="h-9"/>
                         <CommandList>
                             <CommandEmpty>Region not found.</CommandEmpty>
                             <CommandGroup>

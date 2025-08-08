@@ -4,11 +4,16 @@ using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 using api.Endpoints.Weather.RequestResponse.NoaaWater;
 using api.Endpoints.Weather.RequestResponse.NoaaWind;
 using api.Endpoints.Weather.RequestResponse.NdbcWaves;
+using NRedisStack;
+using NRedisStack.RedisStackCommands;
+using StackExchange.Redis;
 
 namespace api.Endpoints.Weather;
 
 public class WeatherServices : BaseService
 {
+    private readonly IDatabase _redisDatabase;
+
     public WeatherServices(
     LakeTrackerContext context,
     ILogger<WeatherServices> logger,

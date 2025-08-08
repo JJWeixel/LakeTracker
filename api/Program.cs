@@ -4,11 +4,15 @@ using api.Endpoints.Weather;
 using api.Endpoints.Alerts;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
+using NRedisStack;
+using NRedisStack.RedisStackCommands;
+using StackExchange.Redis;
 
 namespace api
 {
         public class Program
     {
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +52,18 @@ namespace api
         {
             builder.Services.AddScoped<WeatherServices>();
             builder.Services.AddScoped<AlertsServices>();
+        }
+
+        private static void AddRedis(WebApplicationBuilder builder)
+        {
+            ConfigurationOptions conf = new ConfigurationOptions {
+                EndPoints = { "" },
+                Password = "",
+                Ssl = true,
+            };
+            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(conf);
+            IDatabase db = redis.GetDatabase();
+            builder.Services.AddScoped(sp => db);
         }
 
         private static void AddControllers(WebApplicationBuilder builder)

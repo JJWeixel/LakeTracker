@@ -1,8 +1,8 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Separator } from "@radix-ui/react-separator"
 import Compass from "./Compass"
 import { useQuery } from "@tanstack/react-query";
 import useWeather from "@/hooks/useWeather";
+import { Separator } from "@/components/ui/separator";
 
 const WindCard : React.FC = () => {
 
@@ -40,12 +40,23 @@ const WindCard : React.FC = () => {
             <CardContent className="h-full">
                 <div className="h-full flex flex-row gap-8 justify-between px-8 items-center">
                     <Compass />
-                    <div className="flex flex-col items-center py-4 justify-start text-4xl gap-4">
-                        <div>{ data?.[0].windSpeed } Knots</div>
+                    <div className="flex flex-col items-center py-4 justify-start text-3xl gap-2">
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="text-xl opacity-50">Speed</div>
+                            <div>{ data?.[0].windSpeed } Knots</div>
+                        </div>
                         <Separator />
-                        <div className="flex flex-col justify-start items-center">
-                            <div>{ data?.[0].windDirection }&deg;</div>
-                            <div className="text-2xl opacity-50">{ windDirectionMap[data?.[0].windDirectionReadable as keyof typeof windDirectionMap] || data?.[0].windDirectionReadable }</div>
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="text-xl opacity-50">Gusts</div>
+                            <div>{ data?.[0].gustSpeed } Knots</div>
+                        </div>
+                        <Separator />
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="text-xl opacity-50">Direction</div>
+                            <div className="flex flex-row justify-start items-baseline gap-2">
+                                <div>{ data?.[0].windDirection }&deg;</div>
+                                <div className="text-xl">{ windDirectionMap[data?.[0].windDirectionReadable as keyof typeof windDirectionMap] || data?.[0].windDirectionReadable }</div>
+                            </div>
                         </div>
                     </div>
                 </div>

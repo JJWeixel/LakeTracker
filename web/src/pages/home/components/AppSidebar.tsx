@@ -27,7 +27,7 @@ export function AppSidebar() {
     <Sidebar variant="floating">
       <SidebarContent className="bg-card">
         <SidebarGroup>
-          <SidebarGroupLabel>Options</SidebarGroupLabel>
+          <SidebarGroupLabel>Units</SidebarGroupLabel>
           <SidebarGroupAction asChild>
             <Button variant="ghost" className="size-5 shadow-sm" onClick={handleThemeToggle}>
               {
@@ -40,7 +40,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline">
+                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline" defaultValue="fahrenheit">
                   <ToggleGroupItem value="fahrenheit">
                     &deg;F
                   </ToggleGroupItem>
@@ -50,12 +50,25 @@ export function AppSidebar() {
                 </ToggleGroup>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline">
-                  <ToggleGroupItem value="imperial">
-                    Imperial
+                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline" defaultValue="knots">
+                  <ToggleGroupItem value="knots">
+                    Knots
                   </ToggleGroupItem>
-                  <ToggleGroupItem value="metric">
-                    Metric
+                  <ToggleGroupItem value="mph">
+                    MPH
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="m/s">
+                    m/s
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline" defaultValue="feet">
+                  <ToggleGroupItem value="feet">
+                    feet
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="meters">
+                    meters
                   </ToggleGroupItem>
                 </ToggleGroup>
               </SidebarMenuItem>

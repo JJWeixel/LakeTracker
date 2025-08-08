@@ -30,19 +30,15 @@ public static class NdbcWaveParser
             continue;
 
             string WVHT = parts[8];
-            Console.WriteLine($"Processing line: {line} | WVHT: {WVHT}"); // Log the line and WVHT
             string DPD = parts[9];
-            Console.WriteLine($"Processing line: {line} | DPD: {DPD}"); // Log the line and DPD
 
             if (WVHT == "MM" || WVHT == "N/A") 
             {
-            Console.WriteLine("Skipping invalid wave height."); // Log skipping
-            WVHT = null; // Set to null to indicate invalid
+                WVHT = null; // Set to null to indicate invalid
             }
             if (DPD == "MM" || DPD == "N/A") 
             {
-            Console.WriteLine("Skipping invalid dominant wave period."); // Log skipping
-            DPD = null; // Set to null to indicate invalid
+                DPD = null; // Set to null to indicate invalid
             }
 
             double? waveHeight = null;
@@ -50,12 +46,12 @@ public static class NdbcWaveParser
 
             if (double.TryParse(WVHT, out double parsedWaveHeight))
             {
-            waveHeight = parsedWaveHeight;
+                waveHeight = parsedWaveHeight;
             }
 
             if (double.TryParse(DPD, out double parsedDominantWavePeriod))
             {
-            dominantWavePeriod = parsedDominantWavePeriod;
+                dominantWavePeriod = parsedDominantWavePeriod;
             }
 
             if (!int.TryParse(parts[0], out int year) ||
@@ -64,21 +60,18 @@ public static class NdbcWaveParser
             !int.TryParse(parts[3], out int hour) ||
             !int.TryParse(parts[4], out int minute))
             {
-            Console.WriteLine("Skipping line due to invalid date/time."); // Log skipping
-            continue;
+                continue;
             }
 
             var timestampUtc = new DateTime(year, month, day, hour, minute, 0, DateTimeKind.Utc);
             var easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
             var timestampEst = TimeZoneInfo.ConvertTimeFromUtc(timestampUtc, easternZone);
-            Console.WriteLine($"Parsed successfully: {timestampEst} | WaveHeight: {waveHeight}"); // Log successful parsing
-            Console.WriteLine($"Parsed successfully: {timestampEst} | DominantWavePeriod: {dominantWavePeriod}"); // Log successful parsing
             
             rows.Add(new NdbcWaveRow
             {
-            Timestamp = timestampEst,
-            WaveHeight = waveHeight,
-            DominantWavePeriod = dominantWavePeriod
+                Timestamp = timestampEst,
+                WaveHeight = waveHeight,
+                DominantWavePeriod = dominantWavePeriod
             });
 
             rowCount++;
