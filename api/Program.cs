@@ -2,6 +2,7 @@ using System.Security.Claims;
 using api.Data;
 using api.Endpoints.Weather;
 using api.Endpoints.Alerts;
+using api.Endpoints.Waves;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using NRedisStack;
@@ -53,6 +54,7 @@ namespace api
         {
             builder.Services.AddScoped<WeatherServices>();
             builder.Services.AddScoped<AlertsServices>();
+            builder.Services.AddScoped<WavesServices>();
         }
 
         private static void AddRedis(WebApplicationBuilder builder)

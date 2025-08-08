@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace api.Endpoints.Weather.RequestResponse.NdbcWaves;
+namespace api.Endpoints.Waves.RequestResponse.NdbcWaves;
 
 public class NdbcWaveRow
 {
