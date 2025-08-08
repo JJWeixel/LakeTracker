@@ -146,6 +146,7 @@ public class WeatherServices : BaseService
         }
 
         var weather = weatherData.FirstOrDefault() ?? throw new Exception("No data");
+        weather.Station = stationId;
         var key = $"weather:{weather.Station}";
         var serialized = JsonSerializer.Serialize(weather, _jsonOptions);
         await _redisDatabase.StringSetAsync(key, serialized, TimeSpan.FromMinutes(60));
