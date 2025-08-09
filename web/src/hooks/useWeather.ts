@@ -2,6 +2,7 @@ import useHttp from "./useHttp";
 
 export type WeatherResponse = {
     time: Date;
+    station: string;
     airTemperature: number;
     waterTemperature: number;
     windSpeed: number;

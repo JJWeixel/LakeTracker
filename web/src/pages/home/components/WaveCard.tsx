@@ -1,15 +1,15 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import useWeather from "@/hooks/useWeather";
 import { useQuery } from "@tanstack/react-query";
 import WavePulse from "./WavePulse";
 import { Separator } from "@/components/ui/separator";
+import useWaves from "@/hooks/useWaves";
 
 const WaveCard : React.FC = () => {
     
-    const { getWeather } = useWeather();
+    const { getWaves } = useWaves();
     const { data } = useQuery({
         queryKey: ["weather"],
-        queryFn: getWeather
+        queryFn: getWaves
     });
     
     return (

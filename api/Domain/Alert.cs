@@ -2,8 +2,8 @@ namespace api.Domain;
 
 public class Alert
 {
-    public string Event { get; set; }
     public string Station { get; set; }
+    public string Event { get; set; }
     public DateTime Effective { get; set; }
     public DateTime Onset { get; set; }
     public DateTime Ends { get; set; }

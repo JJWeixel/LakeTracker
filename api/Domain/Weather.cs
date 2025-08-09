@@ -10,6 +10,4 @@ public class Weather
     public double WindDirection { get; set; }
     public string WindDirectionReadable { get; set; }
     public double GustSpeed { get; set; }
-    public double WaveHeight { get; set; }
-    public double DominantWavePeriod { get; set; }
 }

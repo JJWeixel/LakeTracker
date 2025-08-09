@@ -2,12 +2,17 @@ using System.Security.Claims;
 using System.Text.Json;
 using api.Data;
 using api.Endpoints.Alerts.RequestResponse;
+using NRedisStack;
+using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 
 namespace api.Endpoints.Alerts;
 
 public class AlertsServices : BaseService
 {
+    private readonly IDatabase _redisDatabase;
+    private readonly JsonSerializerOptions _jsonOptions;
+
     public AlertsServices(
         LakeTrackerContext context,
         IConnectionMultiplexer redis,
@@ -16,10 +21,38 @@ public class AlertsServices : BaseService
         IConfiguration config)
         : base(context, redis, logger, principal, config)
     {
+        _redisDatabase = redis.GetDatabase();
+        _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        };
+    }
+
+    private string stationId = "OHC035";
+
+    public async Task<Domain.Alert?> GetAlertsFromCache()
+    {
+        var key = $"alerts:{stationId}";
+        var cachedAlert = await _redisDatabase.StringGetAsync(key);
+        if (cachedAlert.IsNullOrEmpty)
+        {
+            Logger.LogInformation("No cached alerts data found.");
+            return null;
+        }
+        var alerts = JsonSerializer.Deserialize<Domain.Alert>(cachedAlert.ToString(), _jsonOptions);
+        return alerts;
     }
 
     public async Task<ICollection<Domain.Alert>> GetAlerts()
     {
+        var cachedAlert = await GetAlertsFromCache();
+        if (cachedAlert != null)
+        {
+            Logger.LogInformation("Returning cached alerts data.");
+            return new List<Domain.Alert> { cachedAlert };
+        }
+
         Logger.LogInformation("Requesting alerts from weather.gov...");
 
         var alertsClient = new HttpClient();
@@ -57,6 +90,13 @@ public class AlertsServices : BaseService
         }).ToList();
 
         Logger.LogInformation($"Parsed {alertsList.Count} alerts successfully.");
+
+        var alerts = alertsList.FirstOrDefault() ?? throw new Exception("No data");
+        alerts.Station = stationId;
+        var key = $"alerts:{alerts.Station}";
+        var serialized = JsonSerializer.Serialize(alerts, _jsonOptions);
+        await _redisDatabase.StringSetAsync(key, serialized, TimeSpan.FromMinutes(60));
+
         return alertsList;
     }
 

@@ -55,7 +55,7 @@ const WindCard : React.FC = () => {
                             <div className="text-xl opacity-50">Direction</div>
                             <div className="flex flex-row justify-start items-baseline gap-2">
                                 <div>{ data?.[0].windDirection }&deg;</div>
-                                <div className="text-xl">{ windDirectionMap[data?.[0].windDirectionReadable as keyof typeof windDirectionMap] || data?.[0].windDirectionReadable }</div>
+                                <div className="text-base">{ windDirectionMap[data?.[0].windDirectionReadable as keyof typeof windDirectionMap] || data?.[0].windDirectionReadable }</div>
                             </div>
                         </div>
                     </div>
