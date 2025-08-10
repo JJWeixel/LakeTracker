@@ -3,6 +3,8 @@ import { TemperatureSlider } from "@/components/ui/temperature-slider"
 import useWeather from "@/hooks/useWeather";
 import { Separator } from "@radix-ui/react-separator"
 import { useQuery } from "@tanstack/react-query";
+import { fToC } from "@/utility/convert";
+import { useUnits } from "@/contexts/UnitsContext";
 
 const TemperatureCard : React.FC = () => {
     
@@ -11,6 +13,9 @@ const TemperatureCard : React.FC = () => {
         queryKey: ["weather"],
         queryFn: getWeather
     });
+    const waterTemperature = data?.[0].waterTemperature ?? 0;
+    const { temperatureUnits: unit } = useUnits();
+    const displayTemp = unit === "F" ? waterTemperature : fToC(waterTemperature);
 
     return (
         <Card className="w-7/8">
@@ -20,7 +25,7 @@ const TemperatureCard : React.FC = () => {
             </CardHeader>
             <CardContent>
                 <div className="flex flex-row gap-4 justify-between items-center px-8">
-                    <div>{ Math.round(data?.[0].waterTemperature ?? 0) }&deg;F</div>
+                    <div>{ displayTemp }&deg;{ unit }</div>
                     <div className="flex flex-col items-center text-gray-500">
                         <div className="text-base">Prev 7 Days</div>
                         <Separator />

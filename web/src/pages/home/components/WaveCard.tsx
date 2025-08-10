@@ -3,14 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import WavePulse from "./WavePulse";
 import { Separator } from "@/components/ui/separator";
 import useWaves from "@/hooks/useWaves";
+import { mToFt } from "@/utility/convert";
+import { useUnits } from "@/contexts/UnitsContext";
 
 const WaveCard : React.FC = () => {
     
     const { getWaves } = useWaves();
     const { data } = useQuery({
-        queryKey: ["weather"],
+        queryKey: ["waves"],
         queryFn: getWaves
     });
+    const { heightUnits: unit } = useUnits();
+    const waveHeight = unit === "meters" ? data?.[0].waveHeight : mToFt(data?.[0].waveHeight ?? 0);
     
     return (
         <Card className="w-full">
@@ -27,9 +31,7 @@ const WaveCard : React.FC = () => {
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-xl opacity-50">Height</div>
                             <div>
-                                { data?.[0].waveHeight != null 
-                                    ? Math.floor(3.28084 * (data[0].waveHeight) * 100) / 100 
-                                    : null } feet
+                                { waveHeight } { unit }
                             </div>
                         </div>
                         <Separator />

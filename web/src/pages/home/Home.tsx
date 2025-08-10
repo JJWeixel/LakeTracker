@@ -1,5 +1,4 @@
 import HomeHeader from "./components/HomeHeader"
-import { useTheme } from "@/components/theme/theme-provider"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./components/AppSidebar"
 import DataChart from "./components/DataChart"
@@ -10,17 +9,6 @@ import WaveCard from "./components/WaveCard"
 import WindCard from "./components/WindCard"
   
 const Home : React.FC = () => {
-    const { theme, setTheme } = useTheme();
-
-    const handleThemeToggle = () => {
-        // Handle theme toggle logic here
-        if (theme === "dark") {
-            setTheme("light")
-        }
-        else {
-            setTheme("dark")
-        }
-    }
 
     return (
         <SidebarProvider>

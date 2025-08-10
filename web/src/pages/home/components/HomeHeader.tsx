@@ -17,22 +17,25 @@ import {
 import React from "react"
 const regions = [
     {
-      value: "cleveland",
+      value: "cle",
       label: "Cleveland",
+      alertStation: "OHC035",
+      weatherStation: "9063063",
+      buoy: "45176",
     },
     {
       value: "erie",
       label: "Erie",
     },
     {
-      value: "toledo",
+      value: "tol",
       label: "Toledo",
     }
   ]
 
 const HomeHeader = () => {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("cleveland");
+    const [location, setLocation] = React.useState("cle");
     return (
         <div className="z-[1001] gap-8 sticky flex top-4 left-0 right-0 mx-auto h-24 w-5/6 items-center rounded-2xl px-8 p border bg-card/50 backdrop-blur-xl drop-shadow-sm">
             <Waves className="size-14 overflow-hidden" />
@@ -50,8 +53,8 @@ const HomeHeader = () => {
                             aria-expanded={open} 
                             className="justify-between w-[200]"
                         >
-                            {value
-                            ? regions.find((region) => region.value === value)?.label
+                            {location
+                            ? regions.find((region) => region.value === location)?.label
                             : "Select region..."}
                             <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -67,7 +70,7 @@ const HomeHeader = () => {
                                 key={framework.value}
                                 value={framework.value}
                                 onSelect={(currentValue) => {
-                                    setValue(currentValue === value ? "" : currentValue)
+                                    setLocation(currentValue === location ? "" : currentValue)
                                     setOpen(false)
                                 }}
                                 >
@@ -75,7 +78,7 @@ const HomeHeader = () => {
                                 <Check
                                     className={cn(
                                     "ml-auto",
-                                    value === framework.value ? "opacity-100" : "opacity-0"
+                                    location === framework.value ? "opacity-100" : "opacity-0"
                                     )}
                                 />
                                 </CommandItem>

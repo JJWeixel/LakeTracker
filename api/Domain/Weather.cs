@@ -10,4 +10,6 @@ public class Weather
     public double WindDirection { get; set; }
     public string WindDirectionReadable { get; set; }
     public double GustSpeed { get; set; }
+    public double WaterTemperatureHigh { get; set; }
+    public double WaterTemperatureLow { get; set; }
 }

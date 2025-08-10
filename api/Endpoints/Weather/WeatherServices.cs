@@ -59,7 +59,7 @@ public class WeatherServices : BaseService
         NOAAWeatherClient.BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter/");
 
         var waterRequest = await NOAAWeatherClient.GetAsync(
-            "?date=today&station=9063063&product=water_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
+            "?date=today&range=168&station=9063063&product=water_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
         
         if (!waterRequest.IsSuccessStatusCode)
         {
@@ -92,9 +92,15 @@ public class WeatherServices : BaseService
         var temperatureJson = await temperatureRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseTemperature>();
         var temperatureData = temperatureJson.Data.ToList();
 
-        var weatherData = new List<Domain.Weather>();
+        var validTemps = waterData
+        .Where(d => double.TryParse(d.Value, out _))
+        .Select(d => double.Parse(d.Value));
 
-        for (int i = waterData.Count - 1; i >= 0; i--)
+        var highTemp = validTemps.Max();
+        var lowTemp = validTemps.Min();
+        
+        Logger.LogInformation($"High Water Temperature: {highTemp}°F, Low Water Temperature: {lowTemp}°F");
+            for (int i = waterData.Count - 1; i >= 0; i--)
         {
             if (i >= windData.Count || i >= temperatureData.Count)
             {
@@ -119,6 +125,8 @@ public class WeatherServices : BaseService
                 WindDirection = wind.Direction,
                 WindDirectionReadable = wind.DirectionReadable,
                 GustSpeed = wind.Gust,
+                WaterTemperatureHigh = highTemp,
+                WaterTemperatureLow = lowTemp
             });
         }
 

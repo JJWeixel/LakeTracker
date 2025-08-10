@@ -3,6 +3,9 @@ import Compass from "./Compass"
 import { useQuery } from "@tanstack/react-query";
 import useWeather from "@/hooks/useWeather";
 import { Separator } from "@/components/ui/separator";
+import { kToMS } from "@/utility/convert";
+import { kToMph } from "@/utility/convert";
+import { useUnits } from "@/contexts/UnitsContext";
 
 const WindCard : React.FC = () => {
 
@@ -11,6 +14,9 @@ const WindCard : React.FC = () => {
         queryKey: ["weather"],
         queryFn: getWeather
     });
+    const { windUnits: unit } = useUnits();
+    const windSpeed = unit === "knots" ? Number(data?.[0].windSpeed).toFixed(1) : unit === "mph" ? kToMph(data?.[0].windSpeed ?? 0) : kToMS(data?.[0].windSpeed ?? 0);
+    const gustSpeed = unit === "knots" ? Number(data?.[0].gustSpeed).toFixed(1) : unit === "mph" ? kToMph(data?.[0].gustSpeed ?? 0) : kToMS(data?.[0].gustSpeed ?? 0);
 
     const windDirectionMap: { [key: string]: string } = {
         N: "North",
@@ -43,12 +49,12 @@ const WindCard : React.FC = () => {
                     <div className="flex flex-col items-center py-4 justify-start text-3xl gap-2">
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-xl opacity-50">Speed</div>
-                            <div>{ data?.[0].windSpeed } Knots</div>
+                            <div>{ windSpeed } { unit }</div>
                         </div>
                         <Separator />
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-xl opacity-50">Gusts</div>
-                            <div>{ data?.[0].gustSpeed } Knots</div>
+                            <div>{ gustSpeed } { unit }</div>
                         </div>
                         <Separator />
                         <div className="flex flex-col items-center justify-center">
