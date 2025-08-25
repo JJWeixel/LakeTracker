@@ -12,7 +12,7 @@ export type AlertResponse = {
 
 const useAlerts = () => {
     const { getOne } = useHttp();
-    const getAlerts = async() => getOne<AlertResponse[]>('https://localhost:7249/alerts');
+    const getAlerts = async() => getOne<AlertResponse[]>('alerts');
     return { getAlerts };
 }
 

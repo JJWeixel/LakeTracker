@@ -2,7 +2,6 @@ import HomeHeader from "./components/HomeHeader"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./components/AppSidebar"
 import DataChart from "./components/DataChart"
-
 import TemperatureCard from "./components/TemperatureCard"
 import AlertsCard from "./components/AlertsCard"
 import WaveCard from "./components/WaveCard"

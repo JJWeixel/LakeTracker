@@ -15,7 +15,7 @@ export type WeatherResponse = {
 
 const useWeather = () => {
     const { getOne } = useHttp();
-    const getWeather = async() => getOne<WeatherResponse[]>('https://localhost:7249/weather')
+    const getWeather = async() => getOne<WeatherResponse[]>('weather')
     return { getWeather };
 }
 

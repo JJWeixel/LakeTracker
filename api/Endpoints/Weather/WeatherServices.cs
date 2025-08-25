@@ -84,6 +84,8 @@ public class WeatherServices : BaseService
             Logger.LogError("Failed to fetch air temperature data from NOAA API.");
             return null;
         }
+
+        var weatherData = new List<Domain.Weather>();
         
         var waterJson = await waterRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseWater>();
         var waterData = waterJson.Data.ToList();
@@ -91,15 +93,7 @@ public class WeatherServices : BaseService
         var windData = windJson.Data.ToList();
         var temperatureJson = await temperatureRequest.Content.ReadFromJsonAsync<NoaaWeatherResponseTemperature>();
         var temperatureData = temperatureJson.Data.ToList();
-
-        var validTemps = waterData
-        .Where(d => double.TryParse(d.Value, out _))
-        .Select(d => double.Parse(d.Value));
-
-        var highTemp = validTemps.Max();
-        var lowTemp = validTemps.Min();
         
-        Logger.LogInformation($"High Water Temperature: {highTemp}°F, Low Water Temperature: {lowTemp}°F");
             for (int i = waterData.Count - 1; i >= 0; i--)
         {
             if (i >= windData.Count || i >= temperatureData.Count)
@@ -116,6 +110,8 @@ public class WeatherServices : BaseService
                 Logger.LogError("Data mismatch: Water, wind, and temperature data timestamps do not align.");
                 return null;
             }
+
+
             weatherData.Add(new Domain.Weather
             {
                 Time = wind.Time,
@@ -125,8 +121,6 @@ public class WeatherServices : BaseService
                 WindDirection = wind.Direction,
                 WindDirectionReadable = wind.DirectionReadable,
                 GustSpeed = wind.Gust,
-                WaterTemperatureHigh = highTemp,
-                WaterTemperatureLow = lowTemp
             });
         }
 

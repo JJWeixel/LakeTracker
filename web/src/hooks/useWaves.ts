@@ -9,7 +9,7 @@ export type WavesResponse = {
 
 const useWaves = () => {
     const { getOne } = useHttp();
-    const getWaves = async() => getOne<WavesResponse[]>('https://localhost:7249/waves')
+    const getWaves = async() => getOne<WavesResponse[]>('waves')
     return { getWaves };
 }
 

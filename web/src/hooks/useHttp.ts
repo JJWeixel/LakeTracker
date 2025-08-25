@@ -2,9 +2,10 @@
 import axios from 'axios'
 
 const useHttp = () => {
+    const apiUri = import.meta.env.VITE_API_ADDRESS;
 
     const getOne = async <T>(relativeUri: string): Promise<T> => {
-        const response = await axios.get<T>(`${relativeUri}`, {
+        const response = await axios.get<T>(`${apiUri}/${relativeUri}`, {
 
         })
         return response.data as T
@@ -12,46 +13,46 @@ const useHttp = () => {
 
     const getMany = async <T>(relativeUri: string): Promise<T[]> => {
 
-        const response = await axios.get<T[]>(`${relativeUri}`, {
+        const response = await axios.get<T[]>(`${apiUri}/${relativeUri}`, {
 
         })
         return response.data
     }
 
     const post = async <T, S>(rq: S, relativeUri: string): Promise<T> => {
-        const response = await axios.post<T>(`${relativeUri}`, rq, {
+        const response = await axios.post<T>(`${apiUri}/${relativeUri}`, rq, {
 
         })
         return response.data as T;
     }
 
     const patch = async <T, S>(rq: S, relativeUri: string): Promise<T> => {
-        const response = await axios.patch<T>(`${relativeUri}`, rq, {
+        const response = await axios.patch<T>(`${apiUri}/${relativeUri}`, rq, {
             
         })
         return response.data;
     }
 
     const put = async <T, S>(rq: S, relativeUri: string): Promise<T> => {
-        const response = await axios.put<T>(`${relativeUri}`, rq, {
+        const response = await axios.put<T>(`${apiUri}/${relativeUri}`, rq, {
             
         })
         return response.data;
     }
     const putAnonymous = async <T, S>(rq: S, relativeUri: string): Promise<T> => {
-        const response = await axios.put<T>(`${relativeUri}`, rq, {})
+        const response = await axios.put<T>(`${apiUri}/${relativeUri}`, rq, {})
         return response.data;
     }
 
     const deleteOne = async <T>(relativeUri: string): Promise<T> => {
-        const response = await axios.delete<T>(`${relativeUri}`, {
+        const response = await axios.delete<T>(`${apiUri}/${relativeUri}`, {
             
         })
         return response.data;
     }
 
     const getRaw = async (relativeUri: string): Promise<string> => {
-        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(relativeUri)}`);
+        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apiUri + "/" + relativeUri)}`);
         const text = await response.text();
         return text;
       };
