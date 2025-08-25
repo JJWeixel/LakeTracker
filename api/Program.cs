@@ -85,12 +85,19 @@ namespace api
         {
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", policy =>
+                options.AddPolicy("AllowLocal", policy =>
                     policy
-                        .WithOrigins("http://localhost:5173") //TODO: Update with your frontend URL
+                        .WithOrigins("http://localhost:5173")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
+
+                options.AddPolicy("AllowGithubPages", policy =>
+                policy
+                    .WithOrigins("https://jjweixel.github.io/LakeTracker")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             });
         }
 
@@ -106,7 +113,7 @@ namespace api
             }
             else 
             {
-                app.UseCors("AllowAll");
+                app.UseCors("AllowGithubPages");
             }
 
             app.UseHttpsRedirection();
