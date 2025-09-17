@@ -60,6 +60,7 @@ namespace api
         private static void AddRedis(WebApplicationBuilder builder)
         {
             var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
+            Console.WriteLine($"Redis Connection String: {redisConnectionString}");
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
                 ConnectionMultiplexer.Connect(redisConnectionString)
             );
