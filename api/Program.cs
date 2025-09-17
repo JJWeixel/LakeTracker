@@ -94,7 +94,7 @@ namespace api
 
                 options.AddPolicy("AllowGithubPages", policy =>
                 policy
-                    .WithOrigins("https://jjweixel.github.io/LakeTracker")
+                    .WithOrigins("https://jjweixel.github.io")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
