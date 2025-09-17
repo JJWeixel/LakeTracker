@@ -60,7 +60,6 @@ namespace api
         private static void AddRedis(WebApplicationBuilder builder)
         {
             var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
-            Console.WriteLine($"Redis Connection String: {redisConnectionString}");
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
                 ConnectionMultiplexer.Connect(redisConnectionString)
             );
@@ -115,6 +114,15 @@ namespace api
             else 
             {
                 app.UseCors("AllowGithubPages");
+            }
+
+            foreach (var kvp in builder.Configuration.AsEnumerable())
+            {
+                if (kvp.Key.Contains("ConnectionStrings", StringComparison.OrdinalIgnoreCase) ||
+                    kvp.Key.Contains("Redis", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"[DEBUG] {kvp.Key} = {kvp.Value}");
+                }
             }
 
             app.UseHttpsRedirection();
