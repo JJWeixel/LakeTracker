@@ -109,20 +109,11 @@ namespace api
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.UseCors("AllowAll");
+                app.UseCors("AllowLocal");
             }
             else 
             {
                 app.UseCors("AllowGithubPages");
-            }
-
-            foreach (var kvp in builder.Configuration.AsEnumerable())
-            {
-                if (kvp.Key.Contains("ConnectionStrings", StringComparison.OrdinalIgnoreCase) ||
-                    kvp.Key.Contains("Redis", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine($"[DEBUG] {kvp.Key} = {kvp.Value}");
-                }
             }
 
             app.UseHttpsRedirection();

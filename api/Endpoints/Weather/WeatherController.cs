@@ -1,5 +1,6 @@
+using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using Exception = api.Exceptions.Exception;
+using Exception = api.Exceptions.Exception; 
 
 namespace api.Endpoints.Weather;
 

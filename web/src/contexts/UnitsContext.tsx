@@ -29,7 +29,14 @@ export const UnitsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   return (
-    <UnitsContext.Provider value={{ windUnits: windUnitsState, setWindUnits, temperatureUnits: temperatureUnitsState, setTemperatureUnits, heightUnits: heightUnitsState, setHeightUnits }}>
+    <UnitsContext.Provider value={{
+      windUnits: windUnitsState,
+      setWindUnits,
+      temperatureUnits: temperatureUnitsState,
+      setTemperatureUnits,
+      heightUnits: heightUnitsState,
+      setHeightUnits
+    }}>
       {children}
     </UnitsContext.Provider>
   );

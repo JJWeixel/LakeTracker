@@ -17,19 +17,32 @@ import {
 import React from "react"
 const regions = [
     {
-      value: "cle",
-      label: "Cleveland",
-      alertStation: "OHC035",
-      weatherStation: "9063063",
-      buoy: "45176",
+        value: "cle",
+        label: "Cleveland",
+        alertStation: "OHC035",
+        weatherStation: "9063063",
+        buoy: "45176",
     },
     {
-      value: "erie",
-      label: "Erie",
+        value: "erie",
+        label: "Erie",
+        alertStation: "PAZ001",
+        weatherStation: "9063038",
+        buoy: "45012",
     },
     {
-      value: "tol",
-      label: "Toledo",
+        value: "tol",
+        label: "Toledo",
+        alertStation: "OHZ003",
+        weatherStation: "9063085",
+        buoy: "45012",
+    },
+    {
+        value: "buf",
+        label: "Buffalo",
+        alertStation: "NYZ010",
+        weatherStation: "9063020",
+        buoy: "45007",
     }
   ]
 
