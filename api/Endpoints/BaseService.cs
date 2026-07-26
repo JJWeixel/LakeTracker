@@ -1,8 +1,5 @@
 using System.Security.Claims;
-using api.Logging;
 using api.Data;
-using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
 using StackExchange.Redis;
 
 namespace api.Endpoints
