@@ -2,16 +2,13 @@ using System.Security.Claims;
 using System.Text.Json;
 using api.Data;
 using api.Endpoints.Alerts.RequestResponse;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 
 namespace api.Endpoints.Alerts;
 
 public class AlertsServices : BaseService
 {
-    private readonly IDatabase _redisDatabase;
-    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly LakeTrackerContext _context;
 
     public AlertsServices(
         LakeTrackerContext context,
@@ -21,36 +18,15 @@ public class AlertsServices : BaseService
         IConfiguration config)
         : base(context, redis, logger, principal, config)
     {
-        _redisDatabase = redis.GetDatabase();
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        };
+        _context = context;
     }
 
-    private string stationId = "OHC035";
-
-    public async Task<Domain.Alert?> GetAlertsFromCache()
+    public async Task<ICollection<Domain.Alert>> GetAlerts(int stationId)
     {
-        var key = $"alerts:{stationId}";
-        var cachedAlert = await _redisDatabase.StringGetAsync(key);
-        if (cachedAlert.IsNullOrEmpty)
+        var station = await _context.Stations.FindAsync(stationId);
+        if (station == null)
         {
-            Logger.LogInformation("No cached alerts data found.");
-            return null;
-        }
-        var alerts = JsonSerializer.Deserialize<Domain.Alert>(cachedAlert.ToString(), _jsonOptions);
-        return alerts;
-    }
-
-    public async Task<ICollection<Domain.Alert>> GetAlerts()
-    {
-        var cachedAlert = await GetAlertsFromCache();
-        if (cachedAlert != null)
-        {
-            Logger.LogInformation("Returning cached alerts data.");
-            return new List<Domain.Alert> { cachedAlert };
+            throw new Exception($"No station found with id {stationId}");
         }
 
         Logger.LogInformation("Requesting alerts from weather.gov...");
@@ -60,13 +36,7 @@ public class AlertsServices : BaseService
         alertsClient.DefaultRequestHeaders.Add("User-Agent", "LakeTracker (weixel.12@osu.edu)");
         alertsClient.DefaultRequestHeaders.Add("Accept", "application/ld+json");
 
-        var alertsRequest = await alertsClient.GetAsync("zone/OHC035");
-
-        if (!alertsRequest.IsSuccessStatusCode)
-        {
-            Logger.LogError("Failed to fetch alerts data from API: " + alertsRequest.StatusCode);
-            return null;
-        }
+        var alertsRequest = await alertsClient.GetAsync($"zone/{station.AlertZoneId}");
 
         var content = await alertsRequest.Content.ReadAsStringAsync();
         Logger.LogInformation("Raw alert response: " + content);
@@ -91,12 +61,10 @@ public class AlertsServices : BaseService
 
         Logger.LogInformation($"Parsed {alertsList.Count} alerts successfully.");
 
-        var alerts = alertsList.FirstOrDefault() ?? throw new Exception("No data");
-        alerts.Station = stationId;
-        var key = $"alerts:{alerts.Station}";
-        var serialized = JsonSerializer.Serialize(alerts, _jsonOptions);
-        await _redisDatabase.StringSetAsync(key, serialized, TimeSpan.FromMinutes(60));
-
+        foreach (var w in alertsList)
+        {
+            w.StationId = station.Id;
+        }
         return alertsList;
     }
 

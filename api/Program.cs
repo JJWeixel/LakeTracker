@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
+using Microsoft.EntityFrameworkCore;
 
 namespace api
 {
@@ -47,7 +48,8 @@ namespace api
 
         private static void AddDbContext(WebApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<LakeTrackerContext>();
+            builder.Services.AddDbContext<LakeTrackerContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnection")));
         }
 
         private static void AddServices(WebApplicationBuilder builder)

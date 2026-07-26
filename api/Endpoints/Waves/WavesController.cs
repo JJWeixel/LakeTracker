@@ -14,11 +14,11 @@ public class WavesController : BaseApiController
     }
     
     [HttpGet()]
-    public async Task<IActionResult> GetWaves()
+    public async Task<IActionResult> GetWaves(int stationId)
     {
         try
         {
-            var waves = await _services.GetWaves();
+            var waves = await _services.GetWaves(stationId);
             return Ok(waves);
         }
         catch (Exception ex)

@@ -1,17 +1,13 @@
 using System.Security.Claims;
-using System.Text.Json;
 using api.Data;
 using api.Endpoints.Waves.RequestResponse.NdbcWaves;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 
 namespace api.Endpoints.Waves;
 
 public class WavesServices : BaseService
 {
-    private readonly IDatabase _redisDatabase;
-    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly LakeTrackerContext _context;
 
     public WavesServices(
     LakeTrackerContext context,
@@ -21,43 +17,22 @@ public class WavesServices : BaseService
     IConfiguration config)
     : base(context, redis, logger, principal, config)
     {
-        _redisDatabase = redis.GetDatabase();
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        };
-    }
-    private string buoyId = "45176";
-    
-    public async Task<Domain.Waves?> GetWavesFromCache()
-    {
-        var key = $"waves:{buoyId}";
-        var cachedWaves = await _redisDatabase.StringGetAsync(key);
-        if (cachedWaves.IsNullOrEmpty)
-        {
-            Logger.LogInformation("No cached waves data found.");
-            return null;
-        }
-        var waves = JsonSerializer.Deserialize<Domain.Waves>(cachedWaves.ToString(), _jsonOptions);
-        return waves;
+        _context = context;
     }
 
-    public async Task<ICollection<Domain.Waves>> GetWaves()
+    public async Task<ICollection<Domain.Waves>> GetWaves(int stationId)
     {
-        
-        var cachedWaves = await GetWavesFromCache();
-        if (cachedWaves != null)
+        var station = await _context.Stations.FindAsync(stationId);
+        if (station == null)
         {
-            Logger.LogInformation("Returning cached waves data.");
-            return new List<Domain.Waves> { cachedWaves };
+            throw new Exception($"No station found with id {stationId}");
         }
         
         var NDBCWavesClient = new HttpClient();
         NDBCWavesClient.BaseAddress = new Uri("https://www.ndbc.noaa.gov/data/realtime2/");
 
         var wavesRequest = await NDBCWavesClient.GetAsync(
-            "45176.txt");
+            $"{station.BuoyId}.txt");
         
         if (!wavesRequest.IsSuccessStatusCode)
         {
@@ -72,28 +47,19 @@ public class WavesServices : BaseService
         for (int i = 0; i < allWaves.Count; i++)
         {
             var wave = allWaves[i];
-            var waveWVHT = allWaves
-                .Where(w => w.WaveHeight > 0)
-                .FirstOrDefault();
-            var waveDPD = allWaves
-                .Where(w => w.DominantWavePeriod > 0)
-                .FirstOrDefault();
 
             wavesData.Add(new Domain.Waves
             {
                 Time = wave.Timestamp,
-                Buoy = buoyId,
-                WaveHeight = waveWVHT?.WaveHeight ?? 0,
-                DominantWavePeriod = waveDPD?.DominantWavePeriod ?? 0,
+                WaveHeight = wave.WaveHeight,
+                DominantWavePeriod = wave.DominantWavePeriod,
             });
         }
 
-        var waves = wavesData.FirstOrDefault() ?? throw new Exception("No data");
-        waves.Buoy = buoyId;
-        var key = $"waves:{waves.Buoy}";
-        var serialized = JsonSerializer.Serialize(waves, _jsonOptions);
-        await _redisDatabase.StringSetAsync(key, serialized, TimeSpan.FromMinutes(60));
-
+        foreach (var w in wavesData)
+        {
+            w.StationId = station.Id;
+        }
         return wavesData;
     }
 }

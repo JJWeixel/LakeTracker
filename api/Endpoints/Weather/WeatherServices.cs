@@ -1,19 +1,15 @@
 using System.Security.Claims;
-using System.Text.Json;
 using api.Data;
 using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 using api.Endpoints.Weather.RequestResponse.NoaaWater;
 using api.Endpoints.Weather.RequestResponse.NoaaWind;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 
 namespace api.Endpoints.Weather;
 
 public class WeatherServices : BaseService
 {
-    private readonly IDatabase _redisDatabase;
-    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly LakeTrackerContext _context;
 
     public WeatherServices(
     LakeTrackerContext context,
@@ -23,43 +19,22 @@ public class WeatherServices : BaseService
     IConfiguration config)
     : base(context, redis, logger, principal, config)
     {
-        _redisDatabase = redis.GetDatabase();
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        };
-    }
-    private string stationId = "9063063";
-    
-    public async Task<Domain.Weather?> GetWeatherFromCache()
-    {
-        var key = $"weather:{stationId}";
-        var cachedWeather = await _redisDatabase.StringGetAsync(key);
-        if (cachedWeather.IsNullOrEmpty)
-        {
-            Logger.LogInformation("No cached weather data found.");
-            return null;
-        }
-        var weather = JsonSerializer.Deserialize<Domain.Weather>(cachedWeather.ToString(), _jsonOptions);
-        return weather;
+        _context = context;
     }
 
-    public async Task<ICollection<Domain.Weather>> GetWeather()
+    public async Task<ICollection<Domain.Weather>> GetWeather(int stationId)
     {
-        
-        var cachedWeather = await GetWeatherFromCache();
-        if (cachedWeather != null)
+        var station = await _context.Stations.FindAsync(stationId);
+        if (station == null)
         {
-            Logger.LogInformation("Returning cached weather data.");
-            return new List<Domain.Weather> { cachedWeather };
+            throw new Exception($"No station found with id {stationId}");
         }
         
         var NOAAWeatherClient = new HttpClient();
         NOAAWeatherClient.BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter/");
 
         var waterRequest = await NOAAWeatherClient.GetAsync(
-            "?date=today&range=168&station=9063063&product=water_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
+            $"?date=today&range=168&station={station.WeatherStationId}&product=water_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
         
         if (!waterRequest.IsSuccessStatusCode)
         {
@@ -68,7 +43,7 @@ public class WeatherServices : BaseService
         }
         
         var windRequest = await NOAAWeatherClient.GetAsync(
-            "?date=today&station=9063063&product=wind&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
+            $"?date=today&station={station.WeatherStationId}&product=wind&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
         
         if (!windRequest.IsSuccessStatusCode)
         {
@@ -77,7 +52,7 @@ public class WeatherServices : BaseService
         }
         
         var temperatureRequest = await NOAAWeatherClient.GetAsync(
-            "?date=today&station=9063063&product=air_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
+            $"?date=today&station={station.WeatherStationId}&product=air_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
         
         if (!temperatureRequest.IsSuccessStatusCode)
         {
@@ -124,12 +99,10 @@ public class WeatherServices : BaseService
             });
         }
 
-        var weather = weatherData.FirstOrDefault() ?? throw new Exception("No data");
-        weather.Station = stationId;
-        var key = $"weather:{weather.Station}";
-        var serialized = JsonSerializer.Serialize(weather, _jsonOptions);
-        await _redisDatabase.StringSetAsync(key, serialized, TimeSpan.FromMinutes(60));
-
+        foreach (var w in weatherData)
+        {
+            w.StationId = station.Id;
+        }
         return weatherData;
     }
 }

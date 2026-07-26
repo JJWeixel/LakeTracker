@@ -15,11 +15,11 @@ public class WeatherController : BaseApiController
     }
     
     [HttpGet()]
-    public async Task<IActionResult> GetWeather()
+    public async Task<IActionResult> GetWeather(int stationId)
     {
         try
         {
-            var weather = await _services.GetWeather();
+            var weather = await _services.GetWeather(stationId);
             return Ok(weather);
         }
         catch (Exception ex)

@@ -14,11 +14,11 @@ public class AlertsController : BaseApiController
     }
     
     [HttpGet()]
-    public async Task<IActionResult> GetAlerts()
+    public async Task<IActionResult> GetAlerts(int stationId)
     {
         try
         {
-            var alerts = await _services.GetAlerts();
+            var alerts = await _services.GetAlerts(stationId);
             return Ok(alerts);
         }
         catch (Exception ex)
