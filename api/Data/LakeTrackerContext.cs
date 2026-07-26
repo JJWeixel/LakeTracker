@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using api.Domain;
-using Microsoft.Extensions.Options;
 
 namespace api.Data
 {
@@ -20,7 +19,7 @@ namespace api.Data
             .IsUnique();
 
         modelBuilder.Entity<Waves>()
-            .HasIndex(w => new { w.Buoy, w.Time })
+            .HasIndex(w => new { w.StationId, w.Time })
             .IsUnique();
 
         modelBuilder.Entity<Station>().HasData(
