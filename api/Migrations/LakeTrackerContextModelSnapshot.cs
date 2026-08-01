@@ -117,11 +117,7 @@ namespace api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Buoy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("DominantWavePeriod")
+                    b.Property<double?>("DominantWavePeriod")
                         .HasColumnType("double precision");
 
                     b.Property<int>("StationId")
@@ -130,17 +126,15 @@ namespace api.Migrations
                     b.Property<DateTime>("Time")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<double>("WaveHeight")
+                    b.Property<double?>("WaveHeight")
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StationId");
-
-                    b.HasIndex("Buoy", "Time")
+                    b.HasIndex("StationId", "Time")
                         .IsUnique();
 
-                    b.ToTable("WaveReadings");
+                    b.ToTable("Waves");
                 });
 
             modelBuilder.Entity("api.Domain.Weather", b =>
@@ -170,7 +164,6 @@ namespace api.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<string>("WindDirectionReadable")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<double>("WindSpeed")
@@ -181,7 +174,7 @@ namespace api.Migrations
                     b.HasIndex("StationId", "Time")
                         .IsUnique();
 
-                    b.ToTable("WeatherReadings");
+                    b.ToTable("Weather");
                 });
 
             modelBuilder.Entity("api.Domain.Alert", b =>

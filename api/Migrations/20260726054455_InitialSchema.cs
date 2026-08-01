@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -55,22 +56,21 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WaveReadings",
+                name: "Waves",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Buoy = table.Column<string>(type: "text", nullable: false),
                     StationId = table.Column<int>(type: "integer", nullable: false),
-                    WaveHeight = table.Column<double>(type: "double precision", nullable: false),
-                    DominantWavePeriod = table.Column<double>(type: "double precision", nullable: false)
+                    WaveHeight = table.Column<double>(type: "double precision", nullable: true),
+                    DominantWavePeriod = table.Column<double>(type: "double precision", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WaveReadings", x => x.Id);
+                    table.PrimaryKey("PK_Waves", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WaveReadings_Stations_StationId",
+                        name: "FK_Waves_Stations_StationId",
                         column: x => x.StationId,
                         principalTable: "Stations",
                         principalColumn: "Id",
@@ -78,7 +78,7 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WeatherReadings",
+                name: "Weather",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -89,19 +89,24 @@ namespace api.Migrations
                     WaterTemperature = table.Column<double>(type: "double precision", nullable: false),
                     WindSpeed = table.Column<double>(type: "double precision", nullable: false),
                     WindDirection = table.Column<double>(type: "double precision", nullable: false),
-                    WindDirectionReadable = table.Column<string>(type: "text", nullable: false),
+                    WindDirectionReadable = table.Column<string>(type: "text", nullable: true),
                     GustSpeed = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WeatherReadings", x => x.Id);
+                    table.PrimaryKey("PK_Weather", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WeatherReadings_Stations_StationId",
+                        name: "FK_Weather_Stations_StationId",
                         column: x => x.StationId,
                         principalTable: "Stations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Stations",
+                columns: new[] { "Id", "AlertZoneId", "BuoyId", "RegionCode", "RegionLabel", "WeatherStationId" },
+                values: new object[] { 1, "OHC035", "45176", "cle", "Cleveland", "9063063" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Alerts_StationId",
@@ -109,19 +114,14 @@ namespace api.Migrations
                 column: "StationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WaveReadings_Buoy_Time",
-                table: "WaveReadings",
-                columns: new[] { "Buoy", "Time" },
+                name: "IX_Waves_StationId_Time",
+                table: "Waves",
+                columns: new[] { "StationId", "Time" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_WaveReadings_StationId",
-                table: "WaveReadings",
-                column: "StationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WeatherReadings_StationId_Time",
-                table: "WeatherReadings",
+                name: "IX_Weather_StationId_Time",
+                table: "Weather",
                 columns: new[] { "StationId", "Time" },
                 unique: true);
         }
@@ -133,10 +133,10 @@ namespace api.Migrations
                 name: "Alerts");
 
             migrationBuilder.DropTable(
-                name: "WaveReadings");
+                name: "Waves");
 
             migrationBuilder.DropTable(
-                name: "WeatherReadings");
+                name: "Weather");
 
             migrationBuilder.DropTable(
                 name: "Stations");

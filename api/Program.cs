@@ -2,9 +2,12 @@ using api.Data;
 using api.Endpoints.Weather;
 using api.Endpoints.Alerts;
 using api.Endpoints.Waves;
+using api.Endpoints.Stations;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using Microsoft.EntityFrameworkCore;
+using api.Ingestion;
+using System.Security.Claims;
 
 namespace api
 {
@@ -53,6 +56,8 @@ namespace api
             builder.Services.AddScoped<WeatherServices>();
             builder.Services.AddScoped<AlertsServices>();
             builder.Services.AddScoped<WavesServices>();
+            builder.Services.AddScoped<StationsServices>();
+            builder.Services.AddHostedService<NoaaIngestionService>();
         }
 
         private static void AddRedis(WebApplicationBuilder builder)
@@ -74,8 +79,7 @@ namespace api
             builder.Services.AddTransient(sp =>
             {
                 var accessor = sp.GetRequiredService<IHttpContextAccessor>();
-                var user = accessor?.HttpContext?.User;
-                return user ?? throw new InvalidOperationException("User not found");
+                return accessor?.HttpContext?.User ?? new ClaimsPrincipal(new ClaimsIdentity());
             });
         }
 

@@ -3,6 +3,7 @@ using System.Text.Json;
 using api.Data;
 using api.Endpoints.Alerts.RequestResponse;
 using StackExchange.Redis;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Endpoints.Alerts;
 
@@ -21,7 +22,7 @@ public class AlertsServices : BaseService
         _context = context;
     }
 
-    public async Task<ICollection<Domain.Alert>> GetAlerts(int stationId)
+    public async Task<ICollection<Domain.Alert>> FetchAlerts(int stationId)
     {
         var station = await _context.Stations.FindAsync(stationId);
         if (station == null)
@@ -68,4 +69,14 @@ public class AlertsServices : BaseService
         return alertsList;
     }
 
+    public async Task<ICollection<Domain.Alert>> GetAlerts(int stationId)
+    {
+        var now = DateTime.UtcNow;
+
+        return await _context.Alerts
+            .AsNoTracking()
+            .Where(a => a.StationId == stationId && a.Effective <= now && a.Ends >= now)
+            .OrderByDescending(a => a.Ends)
+            .ToListAsync();
+    }
 }

@@ -1,21 +1,35 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { TemperatureSlider } from "@/components/ui/temperature-slider"
-import useWeather from "@/hooks/useWeather";
+import useWeather, { type WeatherResponse } from "@/hooks/useWeather";
 import { Separator } from "@radix-ui/react-separator"
 import { useQuery } from "@tanstack/react-query";
 import { fToC } from "@/utility/convert";
 import { useUnits } from "@/contexts/UnitsContext";
+import { useStation } from "@/contexts/StationContext";
 
 const TemperatureCard : React.FC = () => {
     
-    const { getWeather } = useWeather();
-    const { data } = useQuery({
-        queryKey: ["weather"],
-        queryFn: getWeather
+    const { stationId } = useStation();
+    const { getCurrentWeather, getWeather } = useWeather();
+    const { data: currentWeatherData } = useQuery<WeatherResponse[]>({
+        queryKey: ["weather", "current", stationId],
+        queryFn: () => getCurrentWeather(stationId)
     });
-    const waterTemperature = data?.[0].waterTemperature ?? 0;
+    const { data: sevenDayWeather = [] } = useQuery<WeatherResponse[]>({
+        queryKey: ["weather", stationId, 7],
+        queryFn: () => getWeather(stationId, 7)
+    });
+    const currentWeather = currentWeatherData?.[0];
+    const waterTemperature = currentWeather?.waterTemperature ?? 0;
     const { temperatureUnits: unit } = useUnits();
-    const displayTemp = unit === "F" ? waterTemperature : fToC(waterTemperature);
+    const displayTemp = unit === "F" ? Math.round(waterTemperature) : fToC(waterTemperature);
+    const sevenDayWaterTemps = sevenDayWeather
+        .map((weather) => weather.waterTemperature)
+        .filter((temperature): temperature is number => temperature !== null);
+    const sevenDayHigh = sevenDayWaterTemps.length ? Math.max(...sevenDayWaterTemps) : 0;
+    const sevenDayLow = sevenDayWaterTemps.length ? Math.min(...sevenDayWaterTemps) : 0;
+    const displaySevenDayHigh = unit === "F" ? Math.round(sevenDayHigh) : fToC(sevenDayHigh);
+    const displaySevenDayLow = unit === "F" ? Math.round(sevenDayLow) : fToC(sevenDayLow);
 
     return (
         <Card className="w-7/8">
@@ -30,8 +44,8 @@ const TemperatureCard : React.FC = () => {
                         <div className="text-base">Prev 7 Days</div>
                         <Separator />
                         <div className="w-full flex flex-row justify-between gap-4 items-center">
-                            <div className="text-base">H: 54&deg;F</div>
-                            <div className="text-base">L: 50&deg;F</div>
+                            <div className="text-base">H: {displaySevenDayHigh}&deg;{unit}</div>
+                            <div className="text-base">L: {displaySevenDayLow}&deg;{unit}</div>
                         </div>
                     </div>
                     <TemperatureSlider 

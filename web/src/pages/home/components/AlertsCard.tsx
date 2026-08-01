@@ -1,16 +1,30 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import useAlerts from "@/hooks/useAlerts";
+import { useStation } from "@/contexts/StationContext";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp, TriangleAlert } from "lucide-react"
 import React from "react";
+import { type AlertResponse } from "@/hooks/useAlerts";
+
+const formatDate = (value: string | null) => {
+    if (!value) {
+        return "N/A";
+    }
+
+    return new Date(value).toLocaleString("en-US", {
+        dateStyle: "long",
+        timeStyle: "short",
+    });
+};
 
 const AlertsCard : React.FC = () => {
+    const { stationId } = useStation();
     const { getAlerts } = useAlerts();
-    const { data } = useQuery({
-        queryKey: ["alerts"],
-        queryFn: getAlerts
+    const { data } = useQuery<AlertResponse[]>({
+        queryKey: ["alerts", stationId],
+        queryFn: () => getAlerts(stationId),
     });
     const [openStates, setOpenStates] = React.useState<Record<number, boolean>>({});
 
@@ -52,24 +66,15 @@ const AlertsCard : React.FC = () => {
                         <CollapsibleContent className="flex flex-col gap-2 text-sm pl-[50px]">
                             <div>
                                 <strong>Effective:</strong>{" "}
-                                    { new Date(alert.effective).toLocaleString("en-US", {
-                                        dateStyle: "long",
-                                        timeStyle: "short",
-                                    }) }
+                                    { formatDate(alert.effective) }
                             </div>
                             <div>
                                 <strong>Onset:</strong>{" "}
-                                    { new Date(alert.onset).toLocaleString("en-US", {
-                                        dateStyle: "long",
-                                        timeStyle: "short",
-                                    }) }
+                                    { formatDate(alert.onset) }
                             </div>
                             <div>
                                 <strong>Ends:</strong>{" "}
-                                    { new Date(alert.ends).toLocaleString("en-US", {
-                                        dateStyle: "long",
-                                        timeStyle: "short",
-                                    }) }
+                                    { formatDate(alert.ends) }
                             </div>
                             <div>
                                 <strong>Severity:</strong> { alert.severity }

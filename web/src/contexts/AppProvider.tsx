@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
-import { LocationProvider } from "./LocationContext";
+import { StationProvider } from "./StationContext";
 import { UnitsProvider } from "./UnitsContext";
 
 export const AppProviders = ({ children }: { children: ReactNode }) => {
   return (
-    <LocationProvider>
+    <StationProvider>
       <UnitsProvider>
         {children}
       </UnitsProvider>
-    </LocationProvider>
+    </StationProvider>
   );
 };

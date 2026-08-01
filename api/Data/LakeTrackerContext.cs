@@ -8,8 +8,8 @@ namespace api.Data
     public LakeTrackerContext(DbContextOptions<LakeTrackerContext> options) : base(options) { }
 
     public DbSet<Station> Stations { get; set; }
-    public DbSet<Weather> WeatherReadings { get; set; }
-    public DbSet<Waves> WaveReadings { get; set; }
+    public DbSet<Weather> Weather { get; set; }
+    public DbSet<Waves> Waves { get; set; }
     public DbSet<Alert> Alerts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

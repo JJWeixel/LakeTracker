@@ -1,10 +1,12 @@
 import useHttp from "./useHttp";
 
 export type AlertResponse = {
+    time: string;
+    stationId: number;
     event: string;
-    effective: string;
-    onset: string;
-    ends: string;
+    effective: string | null;
+    onset: string | null;
+    ends: string | null;
     severity: string;
     description: string;
     instruction: string;
@@ -12,7 +14,10 @@ export type AlertResponse = {
 
 const useAlerts = () => {
     const { getOne } = useHttp();
-    const getAlerts = async() => getOne<AlertResponse[]>('alerts');
+    
+    const getAlerts = async (stationId: number) =>
+        getOne<AlertResponse[]>(`alerts?stationId=${stationId}`);
+
     return { getAlerts };
 }
 

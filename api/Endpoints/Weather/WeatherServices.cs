@@ -3,6 +3,7 @@ using api.Data;
 using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 using api.Endpoints.Weather.RequestResponse.NoaaWater;
 using api.Endpoints.Weather.RequestResponse.NoaaWind;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 namespace api.Endpoints.Weather;
@@ -22,19 +23,21 @@ public class WeatherServices : BaseService
         _context = context;
     }
 
-    public async Task<ICollection<Domain.Weather>> GetWeather(int stationId)
+    public async Task<ICollection<Domain.Weather>> FetchWeather(int stationId)
     {
         var station = await _context.Stations.FindAsync(stationId);
         if (station == null)
         {
             throw new Exception($"No station found with id {stationId}");
         }
-        
-        var NOAAWeatherClient = new HttpClient();
-        NOAAWeatherClient.BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter/");
+
+        var NOAAWeatherClient = new HttpClient
+        {
+            BaseAddress = new Uri("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter/")
+        };
 
         var waterRequest = await NOAAWeatherClient.GetAsync(
-            $"?date=today&range=168&station={station.WeatherStationId}&product=water_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
+            $"?date=latest&station={station.WeatherStationId}&product=water_temperature&time_zone=gmt&units=english&application=DataAPI_Sample&format=json");
         
         if (!waterRequest.IsSuccessStatusCode)
         {
@@ -43,7 +46,7 @@ public class WeatherServices : BaseService
         }
         
         var windRequest = await NOAAWeatherClient.GetAsync(
-            $"?date=today&station={station.WeatherStationId}&product=wind&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
+            $"?date=latest&station={station.WeatherStationId}&product=wind&time_zone=gmt&units=english&application=DataAPI_Sample&format=json");
         
         if (!windRequest.IsSuccessStatusCode)
         {
@@ -52,7 +55,7 @@ public class WeatherServices : BaseService
         }
         
         var temperatureRequest = await NOAAWeatherClient.GetAsync(
-            $"?date=today&station={station.WeatherStationId}&product=air_temperature&time_zone=LST_LDT&interval=h&units=english&application=DataAPI_Sample&format=json");
+            $"?date=latest&station={station.WeatherStationId}&product=air_temperature&time_zone=gmt&units=english&application=DataAPI_Sample&format=json");
         
         if (!temperatureRequest.IsSuccessStatusCode)
         {
@@ -104,5 +107,37 @@ public class WeatherServices : BaseService
             w.StationId = station.Id;
         }
         return weatherData;
+    }
+
+    public async Task<ICollection<Domain.Weather>> GetWeather(int stationId, int nDays)
+    {
+        if (nDays <= 0)
+        {
+            return new List<Domain.Weather>();
+        }
+
+        var fromTime = DateTime.UtcNow.AddDays(-nDays);
+
+        return await _context.Weather
+            .AsNoTracking()
+            .Where(w => w.StationId == stationId && w.Time >= fromTime)
+            .OrderByDescending(w => w.Time)
+            .ToListAsync();
+    }
+
+    public async Task<ICollection<Domain.Weather>> GetCurrentWeather(int stationId)
+    {
+        var latest = await _context.Weather
+            .AsNoTracking()
+            .Where(w => w.StationId == stationId)
+            .OrderByDescending(w => w.Time)
+            .FirstOrDefaultAsync();
+
+        if (latest == null)
+        {
+            return new List<Domain.Weather>();
+        }
+
+        return new List<Domain.Weather> { latest };
     }
 }

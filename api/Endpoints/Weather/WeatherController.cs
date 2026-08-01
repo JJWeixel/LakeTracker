@@ -13,12 +13,12 @@ public class WeatherController : BaseApiController
         _services = services;
     }
     
-    [HttpGet()]
-    public async Task<IActionResult> GetWeather(int stationId)
+    [HttpGet("current")]
+    public async Task<IActionResult> GetCurrentWeather(int stationId)
     {
         try
         {
-            var weather = await _services.GetWeather(stationId);
+            var weather = await _services.GetCurrentWeather(stationId);
             return Ok(weather);
         }
         catch (Exception ex)
@@ -26,5 +26,18 @@ public class WeatherController : BaseApiController
             return HandleException(ex);
         }
     }
-    
+
+    [HttpGet()]
+    public async Task<IActionResult> GetWeather(int stationId, int nDays)
+    {
+        try
+        {
+            var weather = await _services.GetWeather(stationId, nDays);
+            return Ok(weather);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
 }

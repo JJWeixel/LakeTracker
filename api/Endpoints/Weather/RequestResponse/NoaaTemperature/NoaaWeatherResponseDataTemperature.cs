@@ -11,7 +11,9 @@ public class NoaaWeatherResponseDataTemperature
     public string TimeRaw { get; set; }
 
     [JsonIgnore]
-    public DateTime Time => DateTime.ParseExact(TimeRaw, DateFormat, CultureInfo.InvariantCulture);
+    public DateTime Time => DateTime.SpecifyKind(
+        DateTime.ParseExact(TimeRaw, DateFormat, CultureInfo.InvariantCulture),
+        DateTimeKind.Utc);
     [JsonPropertyName("v")]
     public double Value { get; set; }
     [JsonPropertyName("Flags")]
