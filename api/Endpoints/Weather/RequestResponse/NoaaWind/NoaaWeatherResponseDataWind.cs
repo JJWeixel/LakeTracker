@@ -11,7 +11,9 @@ public class NoaaWeatherResponseDataWind
     public string TimeRaw { get; set; }
 
     [JsonIgnore]
-    public DateTime Time => DateTime.ParseExact(TimeRaw, DateFormat, CultureInfo.InvariantCulture);
+    public DateTime Time => DateTime.SpecifyKind(
+        DateTime.ParseExact(TimeRaw, DateFormat, CultureInfo.InvariantCulture),
+        DateTimeKind.Utc);
     [JsonPropertyName("s")]
     public double Speed { get; set; }
     [JsonPropertyName("d")]

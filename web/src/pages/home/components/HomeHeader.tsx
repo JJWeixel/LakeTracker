@@ -1,4 +1,5 @@
 import { ChevronsUpDown, Waves, Check } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,28 +15,29 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import React from "react"
-const regions = [
-    {
-      value: "cle",
-      label: "Cleveland",
-      alertStation: "OHC035",
-      weatherStation: "9063063",
-      buoy: "45176",
-    },
-    {
-      value: "erie",
-      label: "Erie",
-    },
-    {
-      value: "tol",
-      label: "Toledo",
-    }
-  ]
+import React, { useEffect } from "react"
+import useStations from "@/hooks/useStations"
+import type { StationResponse } from "@/hooks/useStations"
+import { useStation } from "@/contexts/StationContext"
 
 const HomeHeader = () => {
     const [open, setOpen] = React.useState(false)
-    const [location, setLocation] = React.useState("cle");
+    const { stationId, setStationId } = useStation()
+    const { getStations } = useStations()
+
+    const { data: stations = [] } = useQuery<StationResponse[]>({
+        queryKey: ["stations"],
+        queryFn: getStations,
+    })
+
+    useEffect(() => {
+        if (stations.length > 0 && !stations.some((station) => station.id === stationId)) {
+            setStationId(stations[0].id)
+        }
+    }, [stations, stationId, setStationId])
+
+    const location = stations.find((station) => station.id === stationId)
+
     return (
         <div className="z-[1001] gap-8 sticky flex flex-row top-4 left-0 right-0 mx-auto h-24 w-5/6 items-center rounded-2xl px-8 p border bg-card/50 backdrop-blur-xl drop-shadow-sm">
             <Waves className="size-14 overflow-hidden" />
@@ -51,34 +53,34 @@ const HomeHeader = () => {
                             variant="outline"
                             role="combobox"
                             aria-expanded={open} 
-                            className="justify-between w-[200]"
+                            className="justify-between w-[220px]"
                         >
                             {location
-                            ? regions.find((region) => region.value === location)?.label
-                            : "Select region..."}
+                            ? location.regionLabel
+                            : "Select station..."}
                             <ChevronsUpDown className="opacity-50" />
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0 z-[2000]">
+                    <PopoverContent className="w-[220px] p-0 z-[2000]">
                         <Command>
-                        <CommandInput placeholder="Search region..." className="h-9"/>
+                        <CommandInput placeholder="Search station..." className="h-9"/>
                         <CommandList>
-                            <CommandEmpty>Region not found.</CommandEmpty>
+                            <CommandEmpty>Station not found.</CommandEmpty>
                             <CommandGroup>
-                            {regions.map((framework) => (
+                            {stations.map((station) => (
                                 <CommandItem
-                                key={framework.value}
-                                value={framework.value}
-                                onSelect={(currentValue) => {
-                                    setLocation(currentValue === location ? "" : currentValue)
+                                key={station.id}
+                                value={station.regionLabel}
+                                onSelect={() => {
+                                    setStationId(station.id)
                                     setOpen(false)
                                 }}
                                 >
-                                {framework.label}
+                                {station.regionLabel}
                                 <Check
                                     className={cn(
                                     "ml-auto",
-                                    location === framework.value ? "opacity-100" : "opacity-0"
+                                    stationId === station.id ? "opacity-100" : "opacity-0"
                                     )}
                                 />
                                 </CommandItem>

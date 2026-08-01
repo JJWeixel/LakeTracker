@@ -1,17 +1,14 @@
 using System.Security.Claims;
-using System.Text.Json;
 using api.Data;
 using api.Endpoints.Waves.RequestResponse.NdbcWaves;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Endpoints.Waves;
 
 public class WavesServices : BaseService
 {
-    private readonly IDatabase _redisDatabase;
-    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly LakeTrackerContext _context;
 
     public WavesServices(
     LakeTrackerContext context,
@@ -21,79 +18,122 @@ public class WavesServices : BaseService
     IConfiguration config)
     : base(context, redis, logger, principal, config)
     {
-        _redisDatabase = redis.GetDatabase();
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        };
-    }
-    private string buoyId = "45176";
-    
-    public async Task<Domain.Waves?> GetWavesFromCache()
-    {
-        var key = $"waves:{buoyId}";
-        var cachedWaves = await _redisDatabase.StringGetAsync(key);
-        if (cachedWaves.IsNullOrEmpty)
-        {
-            Logger.LogInformation("No cached waves data found.");
-            return null;
-        }
-        var waves = JsonSerializer.Deserialize<Domain.Waves>(cachedWaves.ToString(), _jsonOptions);
-        return waves;
+        _context = context;
     }
 
-    public async Task<ICollection<Domain.Waves>> GetWaves()
+    public async Task<ICollection<Domain.Waves>> FetchWaves(int stationId)
     {
-        
-        var cachedWaves = await GetWavesFromCache();
-        if (cachedWaves != null)
+        var station = await _context.Stations.FindAsync(stationId);
+        if (station == null)
         {
-            Logger.LogInformation("Returning cached waves data.");
-            return new List<Domain.Waves> { cachedWaves };
+            throw new Exception($"No station found with id {stationId}");
         }
         
         var NDBCWavesClient = new HttpClient();
         NDBCWavesClient.BaseAddress = new Uri("https://www.ndbc.noaa.gov/data/realtime2/");
 
         var wavesRequest = await NDBCWavesClient.GetAsync(
-            "45176.txt");
+            $"{station.BuoyId}.txt");
         
         if (!wavesRequest.IsSuccessStatusCode)
         {
             Logger.LogError("Failed to fetch air wave data from NDBC API.");
-            return null;
+            return new List<Domain.Waves>();
         }
         
-        var allWaves = NdbcWaveParser.ParseAllValid(wavesRequest.Content.ReadAsStringAsync().Result);
+        //var allWaves = NdbcWaveParser.ParseAllValid(wavesRequest.Content.ReadAsStringAsync().Result);
+        var allWaves = NdbcWaveParser.ParseMostRecent(wavesRequest.Content.ReadAsStringAsync().Result);
 
         var wavesData = new List<Domain.Waves>();
 
         for (int i = 0; i < allWaves.Count; i++)
         {
             var wave = allWaves[i];
-            var waveWVHT = allWaves
-                .Where(w => w.WaveHeight > 0)
-                .FirstOrDefault();
-            var waveDPD = allWaves
-                .Where(w => w.DominantWavePeriod > 0)
-                .FirstOrDefault();
 
             wavesData.Add(new Domain.Waves
             {
                 Time = wave.Timestamp,
-                Buoy = buoyId,
-                WaveHeight = waveWVHT?.WaveHeight ?? 0,
-                DominantWavePeriod = waveDPD?.DominantWavePeriod ?? 0,
+                WaveHeight = wave.WaveHeight,
+                DominantWavePeriod = wave.DominantWavePeriod,
             });
         }
 
-        var waves = wavesData.FirstOrDefault() ?? throw new Exception("No data");
-        waves.Buoy = buoyId;
-        var key = $"waves:{waves.Buoy}";
-        var serialized = JsonSerializer.Serialize(waves, _jsonOptions);
-        await _redisDatabase.StringSetAsync(key, serialized, TimeSpan.FromMinutes(60));
-
+        foreach (var w in wavesData)
+        {
+            w.StationId = station.Id;
+        }
         return wavesData;
+    }
+
+    public async Task<ICollection<Domain.Waves>> GetWaves(int stationId, int nDays)
+    {
+        if (nDays <= 0)
+        {
+            return new List<Domain.Waves>();
+        }
+
+        var fromTime = DateTime.UtcNow.AddDays(-nDays);
+
+        var waves = await _context.Waves
+            .AsNoTracking()
+            .Where(w => w.StationId == stationId && w.Time >= fromTime)
+            .OrderBy(w => w.Time)
+            .ToListAsync();
+
+        return FillMissingWaveValues(waves)
+            .OrderByDescending(w => w.Time)
+            .ToList();
+    }
+
+    public async Task<ICollection<Domain.Waves>> GetCurrentWaves(int stationId)
+    {
+        var latest = await _context.Waves
+            .AsNoTracking()
+            .Where(w => w.StationId == stationId)
+            .OrderByDescending(w => w.Time)
+            .FirstOrDefaultAsync();
+
+        if (latest == null)
+        {
+            return new List<Domain.Waves>();
+        }
+
+        var previousValues = await _context.Waves
+            .AsNoTracking()
+            .Where(w => w.StationId == stationId && w.Time < latest.Time)
+            .OrderBy(w => w.Time)
+            .ToListAsync();
+
+        var filledRows = FillMissingWaveValues(previousValues.Append(latest).ToList());
+        return new List<Domain.Waves> { filledRows.Last() };
+    }
+
+    private static IEnumerable<Domain.Waves> FillMissingWaveValues(IReadOnlyList<Domain.Waves> waves)
+    {
+        double? lastWaveHeight = null;
+        double? lastDominantWavePeriod = null;
+
+        foreach (var wave in waves)
+        {
+            if (wave.WaveHeight == null)
+            {
+                wave.WaveHeight = lastWaveHeight;
+            }
+            else
+            {
+                lastWaveHeight = wave.WaveHeight;
+            }
+
+            if (wave.DominantWavePeriod == null)
+            {
+                wave.DominantWavePeriod = lastDominantWavePeriod;
+            }
+            else
+            {
+                lastDominantWavePeriod = wave.DominantWavePeriod;
+            }
+        }
+
+        return waves;
     }
 }

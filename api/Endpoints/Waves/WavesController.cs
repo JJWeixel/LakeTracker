@@ -13,12 +13,26 @@ public class WavesController : BaseApiController
         _services = services;
     }
     
-    [HttpGet()]
-    public async Task<IActionResult> GetWaves()
+    [HttpGet("current")]
+    public async Task<IActionResult> GetCurrentWaves(int stationId)
     {
         try
         {
-            var waves = await _services.GetWaves();
+            var waves = await _services.GetCurrentWaves(stationId);
+            return Ok(waves);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    [HttpGet()]
+    public async Task<IActionResult> GetWaves(int stationId, int nDays)
+    {
+        try
+        {
+            var waves = await _services.GetWaves(stationId, nDays);
             return Ok(waves);
         }
         catch (Exception ex)

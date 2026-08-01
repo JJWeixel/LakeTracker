@@ -6,17 +6,20 @@ import { Separator } from "@/components/ui/separator";
 import { kToMS } from "@/utility/convert";
 import { kToMph } from "@/utility/convert";
 import { useUnits } from "@/contexts/UnitsContext";
+import { useStation } from "@/contexts/StationContext";
 
 const WindCard : React.FC = () => {
 
-    const { getWeather } = useWeather();
+    const { stationId } = useStation();
+    const { getCurrentWeather } = useWeather();
     const { data } = useQuery({
-        queryKey: ["weather"],
-        queryFn: getWeather
+        queryKey: ["weather", "current", stationId],
+        queryFn: () => getCurrentWeather(stationId)
     });
     const { windUnits: unit } = useUnits();
-    const windSpeed = unit === "knots" ? Number(data?.[0].windSpeed).toFixed(1) : unit === "mph" ? kToMph(data?.[0].windSpeed ?? 0) : kToMS(data?.[0].windSpeed ?? 0);
-    const gustSpeed = unit === "knots" ? Number(data?.[0].gustSpeed).toFixed(1) : unit === "mph" ? kToMph(data?.[0].gustSpeed ?? 0) : kToMS(data?.[0].gustSpeed ?? 0);
+    const currentWeather = data?.[0];
+    const windSpeed = unit === "knots" ? Number(currentWeather?.windSpeed ?? 0).toFixed(1) : unit === "mph" ? kToMph(currentWeather?.windSpeed ?? 0) : kToMS(currentWeather?.windSpeed ?? 0);
+    const gustSpeed = unit === "knots" ? Number(currentWeather?.gustSpeed ?? 0).toFixed(1) : unit === "mph" ? kToMph(currentWeather?.gustSpeed ?? 0) : kToMS(currentWeather?.gustSpeed ?? 0);
 
     const windDirectionMap: { [key: string]: string } = {
         N: "North",
@@ -60,8 +63,8 @@ const WindCard : React.FC = () => {
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-xl opacity-50">Direction</div>
                             <div className="flex flex-row justify-start items-baseline gap-2">
-                                <div>{ data?.[0].windDirection }&deg;</div>
-                                <div className="text-base">{ windDirectionMap[data?.[0].windDirectionReadable as keyof typeof windDirectionMap] || data?.[0].windDirectionReadable }</div>
+                                <div>{ currentWeather?.windDirection }&deg;</div>
+                                <div className="text-base">{ windDirectionMap[currentWeather?.windDirectionReadable as keyof typeof windDirectionMap] || currentWeather?.windDirectionReadable }</div>
                             </div>
                         </div>
                     </div>

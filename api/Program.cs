@@ -1,13 +1,13 @@
-using System.Security.Claims;
 using api.Data;
 using api.Endpoints.Weather;
 using api.Endpoints.Alerts;
 using api.Endpoints.Waves;
+using api.Endpoints.Stations;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authorization;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
+using Microsoft.EntityFrameworkCore;
+using api.Ingestion;
+using System.Security.Claims;
 
 namespace api
 {
@@ -47,7 +47,8 @@ namespace api
 
         private static void AddDbContext(WebApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<LakeTrackerContext>();
+            builder.Services.AddDbContext<LakeTrackerContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnection")));
         }
 
         private static void AddServices(WebApplicationBuilder builder)
@@ -55,6 +56,8 @@ namespace api
             builder.Services.AddScoped<WeatherServices>();
             builder.Services.AddScoped<AlertsServices>();
             builder.Services.AddScoped<WavesServices>();
+            builder.Services.AddScoped<StationsServices>();
+            builder.Services.AddHostedService<NoaaIngestionService>();
         }
 
         private static void AddRedis(WebApplicationBuilder builder)
@@ -76,8 +79,7 @@ namespace api
             builder.Services.AddTransient(sp =>
             {
                 var accessor = sp.GetRequiredService<IHttpContextAccessor>();
-                var user = accessor?.HttpContext?.User;
-                return user ?? throw new InvalidOperationException("User not found");
+                return accessor?.HttpContext?.User ?? new ClaimsPrincipal(new ClaimsIdentity());
             });
         }
 
@@ -109,20 +111,11 @@ namespace api
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.UseCors("AllowAll");
+                app.UseCors("AllowLocal");
             }
             else 
             {
                 app.UseCors("AllowGithubPages");
-            }
-
-            foreach (var kvp in builder.Configuration.AsEnumerable())
-            {
-                if (kvp.Key.Contains("ConnectionStrings", StringComparison.OrdinalIgnoreCase) ||
-                    kvp.Key.Contains("Redis", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine($"[DEBUG] {kvp.Key} = {kvp.Value}");
-                }
             }
 
             app.UseHttpsRedirection();
