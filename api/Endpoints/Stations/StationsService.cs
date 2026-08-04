@@ -1,7 +1,6 @@
+using System.Security.Claims;
 using api.Data;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
-using System.Security.Claims;
 
 namespace api.Endpoints.Stations;
 
@@ -11,11 +10,10 @@ public class StationsServices : BaseService
 
 	public StationsServices(
 		LakeTrackerContext context,
-		IConnectionMultiplexer redis,
 		ILogger<StationsServices> logger,
 		ClaimsPrincipal principal,
 		IConfiguration config)
-		: base(context, redis, logger, principal, config)
+		: base(context, logger, principal, config)
 	{
 		_context = context;
 	}

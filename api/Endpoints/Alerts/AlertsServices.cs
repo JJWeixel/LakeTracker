@@ -2,7 +2,6 @@ using System.Security.Claims;
 using System.Text.Json;
 using api.Data;
 using api.Endpoints.Alerts.RequestResponse;
-using StackExchange.Redis;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Endpoints.Alerts;
@@ -13,11 +12,10 @@ public class AlertsServices : BaseService
 
     public AlertsServices(
         LakeTrackerContext context,
-        IConnectionMultiplexer redis,
         ILogger<AlertsServices> logger,
         ClaimsPrincipal principal,
         IConfiguration config)
-        : base(context, redis, logger, principal, config)
+        : base(context, logger, principal, config)
     {
         _context = context;
     }

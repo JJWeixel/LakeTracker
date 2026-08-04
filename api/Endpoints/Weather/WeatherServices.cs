@@ -4,7 +4,6 @@ using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
 using api.Endpoints.Weather.RequestResponse.NoaaWater;
 using api.Endpoints.Weather.RequestResponse.NoaaWind;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 namespace api.Endpoints.Weather;
 
@@ -14,11 +13,10 @@ public class WeatherServices : BaseService
 
     public WeatherServices(
     LakeTrackerContext context,
-    IConnectionMultiplexer redis,
     ILogger<WeatherServices> logger,
     ClaimsPrincipal principal,
     IConfiguration config)
-    : base(context, redis, logger, principal, config)
+    : base(context, logger, principal, config)
     {
         _context = context;
     }
