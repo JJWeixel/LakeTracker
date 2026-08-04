@@ -1,8 +1,4 @@
 using System.Security.Claims;
-using api.Data;
-using api.Endpoints.Waves.RequestResponse.NdbcWaves;
-using StackExchange.Redis;
-using Microsoft.EntityFrameworkCore;
 
 namespace api.Endpoints.Waves;
 
@@ -12,11 +8,10 @@ public class WavesServices : BaseService
 
     public WavesServices(
     LakeTrackerContext context,
-    IConnectionMultiplexer redis,
     ILogger<WavesServices> logger,
     ClaimsPrincipal principal,
     IConfiguration config)
-    : base(context, redis, logger, principal, config)
+    : base(context, logger, principal, config)
     {
         _context = context;
     }
