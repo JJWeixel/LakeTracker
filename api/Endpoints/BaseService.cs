@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using api.Data;
 
 namespace api.Endpoints
 {

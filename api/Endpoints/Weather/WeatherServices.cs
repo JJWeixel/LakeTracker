@@ -1,4 +1,9 @@
 using System.Security.Claims;
+using api.Data;
+using api.Endpoints.Weather.RequestResponse.NoaaTemperature;
+using api.Endpoints.Weather.RequestResponse.NoaaWater;
+using api.Endpoints.Weather.RequestResponse.NoaaWind;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Endpoints.Weather;
 

@@ -1,4 +1,7 @@
 using System.Security.Claims;
+using api.Data;
+using api.Endpoints.Waves.RequestResponse.NdbcWaves;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Endpoints.Waves;
 
