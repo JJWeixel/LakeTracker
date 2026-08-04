@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - main
-    paths:
-        - 'api/**'
   workflow_dispatch:
 
 jobs:
@@ -53,9 +51,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B031E5BA791D46BB9F8014CFD5898C48 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1B44ECCC633A47C78EFAF0891799E232 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_ECDF4CD97C044258985715B833188D28 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0E6C3739E0D64B37925B008134EACFF8 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_29EC52290296466ABD01E2FC970B812C }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_380DF092EF824AD9B6B09F6A2E10FCAC }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
