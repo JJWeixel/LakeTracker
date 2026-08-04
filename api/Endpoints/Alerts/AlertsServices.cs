@@ -1,9 +1,5 @@
 using System.Security.Claims;
 using System.Text.Json;
-using api.Data;
-using api.Endpoints.Alerts.RequestResponse;
-using StackExchange.Redis;
-using Microsoft.EntityFrameworkCore;
 
 namespace api.Endpoints.Alerts;
 

@@ -4,7 +4,6 @@ using api.Endpoints.Alerts;
 using api.Endpoints.Waves;
 using api.Endpoints.Stations;
 using Microsoft.OpenApi.Models;
-using StackExchange.Redis;
 using Microsoft.EntityFrameworkCore;
 using api.Ingestion;
 using System.Security.Claims;
@@ -22,7 +21,6 @@ namespace api
             AddSwaggerGen(builder);
             AddDbContext(builder);
             AddServices(builder);
-            AddRedis(builder);
             AddControllers(builder);
             AddCurrentUser(builder);
             AddCorsPolicy(builder);
@@ -58,14 +56,6 @@ namespace api
             builder.Services.AddScoped<WavesServices>();
             builder.Services.AddScoped<StationsServices>();
             builder.Services.AddHostedService<NoaaIngestionService>();
-        }
-
-        private static void AddRedis(WebApplicationBuilder builder)
-        {
-            var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
-            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-                ConnectionMultiplexer.Connect(redisConnectionString)
-            );
         }
 
         private static void AddControllers(WebApplicationBuilder builder)
