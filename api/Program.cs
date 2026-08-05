@@ -85,10 +85,10 @@ namespace api
                         .AllowCredentials());
                 options.AddPolicy("AllowProduction", policy =>
                     policy
-                    .WithOrigins("https://laketracker.us", "https://www.laketracker.us", "https://jjweixel.github.io")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                        .WithOrigins("https://laketracker.us", "https://www.laketracker.us", "https://jjweixel.github.io")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             });
         }
 
