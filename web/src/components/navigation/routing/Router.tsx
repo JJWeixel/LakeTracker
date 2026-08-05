@@ -8,7 +8,7 @@ const Router = createBrowserRouter([
     }
 ],
     {
-        basename: import.meta.env.BASE_URL || "/LakeTracker/"
+        basename: import.meta.env.BASE_URL
     }
 );
 
