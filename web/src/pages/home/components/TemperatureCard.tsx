@@ -32,7 +32,7 @@ const TemperatureCard : React.FC = () => {
     const displaySevenDayLow = unit === "F" ? Math.round(sevenDayLow) : fToC(sevenDayLow);
 
     return (
-        <Card className="w-7/8">
+        <Card className="w-full min-w-0">
             <CardHeader>
                 <CardTitle className="text-3xl">Water Temperature</CardTitle>
                 <CardDescription>current conditions</CardDescription>

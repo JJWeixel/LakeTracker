@@ -35,7 +35,7 @@ const DataChart = () => {
     const [measurement, setMeasurement] = React.useState("temp")
 
     return (
-        <Card className="w-7/8 h-auto text-5xl">
+        <Card className="w-full min-w-0 h-auto text-5xl">
             <CardHeader>
                 <CardTitle className="text-3xl">History</CardTitle>
                 <CardDescription>Last 7 days</CardDescription>

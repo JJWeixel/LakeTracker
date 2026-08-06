@@ -12,17 +12,21 @@ const Home : React.FC = () => {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <main className="h-full w-full m-4">
+            <main className="h-full w-full m-4 min-w-0">
                 <SidebarTrigger/>
                 <HomeHeader />
-                <div className="w-full py-4 flex grow flex-col text-5xl gap-4 items-center">
-                    <TemperatureCard />
-                    <AlertsCard />
-                    <div className="w-7/8 flex flex-row gap-4 justify-between">
-                        <WindCard />
-                        <WaveCard />
+                <div className="w-full py-4 grid grid-cols-1 gap-4 text-5xl lg:grid-cols-2">
+                    <div className="lg:col-span-2">
+                        <TemperatureCard />
                     </div>
-                    <DataChart />
+                    <div className="lg:col-span-2">
+                        <AlertsCard />
+                    </div>
+                    <WindCard />
+                    <WaveCard />
+                    <div className="lg:col-span-2">
+                        <DataChart />
+                    </div>
                 </div>
             </main>
         </SidebarProvider>

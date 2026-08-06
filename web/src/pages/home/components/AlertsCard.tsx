@@ -29,7 +29,7 @@ const AlertsCard : React.FC = () => {
     const [openStates, setOpenStates] = React.useState<Record<number, boolean>>({});
 
     return (
-        <Card className="w-7/8 gap-2">
+        <Card className="w-full min-w-0 gap-2">
             <CardHeader>
                 <CardTitle className="text-3xl">Alerts</CardTitle>
             </CardHeader>
