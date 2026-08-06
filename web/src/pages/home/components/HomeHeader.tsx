@@ -44,7 +44,7 @@ const HomeHeader = () => {
                 <Waves className="size-10 shrink-0 overflow-hidden md:size-14" />
                 <div className="flex min-w-0 flex-row flex-grow justify-between text-sm md:text-base">
                     <span className="overflow-hidden line-clamp-1 text-2xl font-semibold md:text-5xl">LakeTracker</span>
-                    <div className="hidden flex-col items-end justify-center gap-1 text-xs md:flex md:text-sm">
+                    <div className="flex-col items-end justify-center gap-1 text-xs flex md:text-sm">
                         <span className="overflow-hidden line-clamp-1">Tracking conditions on Lake Erie</span>
                         <span className="overflow-hidden line-clamp-1">Made by JJ Weixel</span>
                     </div>
