@@ -14,6 +14,7 @@ const Compass : React.FC = () => {
     const currentWeather = weather?.[0];
 
     return (
+        <div className="origin-center scale-75 md:scale-100">
         <div className={`min-w-[160px] min-h-[160px] border-[10px] rounded-full flex flex-col justify-center items-center relative text-2xl`}>
             <div className="-translate-y-[55px] absolute text-red-500 font-bold">N</div>
             <div className="-translate-x-[55px] absolute font-bold">W</div>
@@ -41,6 +42,7 @@ const Compass : React.FC = () => {
                     />
                 );
             })}
+        </div>
         </div>
     )
 }

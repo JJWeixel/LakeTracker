@@ -43,28 +43,30 @@ const WindCard : React.FC = () => {
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle className="text-3xl">Wind</CardTitle>
+                <CardTitle className="text-2xl md:text-3xl">Wind</CardTitle>
                 <CardDescription>direction & speed</CardDescription>
             </CardHeader>
-            <CardContent className="h-full">
-                <div className="h-full flex flex-row gap-8 justify-between px-8 items-center">
+            <CardContent className="h-full min-w-0">
+                <div className="h-full flex flex-row gap-4 px-4 items-center justify-between lg:gap-8 lg:px-8">
                     <Compass />
-                    <div className="flex flex-col items-center py-4 justify-start text-3xl gap-2">
-                        <div className="flex flex-col items-center justify-center">
-                            <div className="text-xl opacity-50">Speed</div>
-                            <div>{ windSpeed } { unit }</div>
-                        </div>
-                        <Separator />
-                        <div className="flex flex-col items-center justify-center">
-                            <div className="text-xl opacity-50">Gusts</div>
-                            <div>{ gustSpeed } { unit }</div>
-                        </div>
-                        <Separator />
-                        <div className="flex flex-col items-center justify-center">
-                            <div className="text-xl opacity-50">Direction</div>
-                            <div className="flex flex-row justify-start items-baseline gap-2">
-                                <div>{ currentWeather?.windDirection }&deg;</div>
-                                <div className="text-base">{ windDirectionMap[currentWeather?.windDirectionReadable as keyof typeof windDirectionMap] || currentWeather?.windDirectionReadable }</div>
+                    <div className="flex min-w-0 flex-row flex-grow justify-center">
+                        <div className="flex min-w-0 flex-col items-center py-4 justify-start text-center text-lg md:text-3xl gap-3">
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="text-base opacity-50 md:text-xl">Speed</div>
+                                <div>{ windSpeed } { unit }</div>
+                            </div>
+                            <Separator />
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="text-base opacity-50 md:text-xl">Gusts</div>
+                                <div>{ gustSpeed } { unit }</div>
+                            </div>
+                            <Separator />
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="text-base opacity-50 md:text-xl">Direction</div>
+                                <div className="flex flex-col items-center gap-1 md:flex-row md:items-baseline md:gap-2">
+                                    <div>{ currentWeather?.windDirection }&deg;</div>
+                                    <div className="text-sm md:text-base">{ windDirectionMap[currentWeather?.windDirectionReadable as keyof typeof windDirectionMap] || currentWeather?.windDirectionReadable }</div>
+                                </div>
                             </div>
                         </div>
                     </div>

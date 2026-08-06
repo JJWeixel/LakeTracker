@@ -39,21 +39,25 @@ const HomeHeader = () => {
     const location = stations.find((station) => station.id === stationId)
 
     return (
-        <div className="z-[1001] gap-8 sticky flex flex-row top-4 left-0 right-0 mx-auto h-24 w-5/6 items-center rounded-2xl px-8 p border bg-card/50 backdrop-blur-xl drop-shadow-sm">
-            <Waves className="size-14 overflow-hidden" />
-            <span className="text-5xl font-semibold">LakeTracker</span>
-            <div className="flex flex-col justify-around items-start text-sm">
-                <span className="overflow-hidden line-clamp-1">Tracking conditions on Lake Erie</span>
-                <span className="overflow-hidden line-clamp-1">Made by JJ Weixel</span>
+        <div className="z-[1001] sticky top-4 left-0 right-0 mx-auto flex w-5/6 flex-col gap-4 rounded-2xl border bg-card/50 px-4 py-4 drop-shadow-sm backdrop-blur-xl md:px-8">
+            <div className="flex w-full flex-row items-center gap-4 overflow-hidden">
+                <Waves className="size-10 shrink-0 overflow-hidden md:size-14" />
+                <div className="flex min-w-0 flex-row flex-grow justify-between text-sm md:text-base">
+                    <span className="overflow-hidden line-clamp-1 text-2xl font-semibold md:text-5xl">LakeTracker</span>
+                    <div className="hidden flex-col items-end justify-center gap-1 text-xs md:flex md:text-sm">
+                        <span className="overflow-hidden line-clamp-1">Tracking conditions on Lake Erie</span>
+                        <span className="overflow-hidden line-clamp-1">Made by JJ Weixel</span>
+                    </div>
+                </div>
             </div>
-            <div className="flex justify-end items-center grow">
+            <div className="flex w-full items-center justify-end">
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                         <Button 
                             variant="outline"
                             role="combobox"
                             aria-expanded={open} 
-                            className="justify-between w-[220px]"
+                            className="w-full justify-between"
                         >
                             {location
                             ? location.regionLabel
@@ -61,7 +65,7 @@ const HomeHeader = () => {
                             <ChevronsUpDown className="opacity-50" />
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[220px] p-0 z-[2000]">
+                    <PopoverContent align="start" sideOffset={8} collisionPadding={16} className="z-[2000] w-[var(--radix-popover-trigger-width)] p-0">
                         <Command>
                         <CommandInput placeholder="Search station..." className="h-9"/>
                         <CommandList>
