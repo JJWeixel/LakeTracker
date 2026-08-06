@@ -22,25 +22,27 @@ const WaveCard : React.FC = () => {
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle className="text-3xl">Waves</CardTitle>
+                <CardTitle className="text-2xl md:text-3xl">Waves</CardTitle>
                 <CardDescription>height & frequency</CardDescription>
             </CardHeader>
-            <CardContent className="h-full">
-                <div className="h-full flex flex-row gap-8 justify-between px-8 items-center">
-                    <div className="pl-8">
+            <CardContent className="h-full min-w-0">
+                <div className="flex h-full flex-row items-center gap-4 px-4 lg:gap-8 lg:px-8">
+                    <div className="shrink-0">
                         <WavePulse periodSeconds={currentWave?.dominantWavePeriod ?? 0} />
                     </div>
-                    <div className="flex flex-col items-center py-4 text-3xl justify-start gap-2">
-                        <div className="flex flex-col items-center justify-center">
-                            <div className="text-xl opacity-50">Height</div>
-                            <div>
-                                { waveHeight } { unit }
+                    <div className="flex min-w-0 flex-grow justify-center">
+                        <div className="flex min-w-0 flex-col items-center py-4 text-center text-lg md:text-3xl justify-start gap-3">
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="text-base opacity-50 md:text-xl">Height</div>
+                                <div>
+                                    { waveHeight } { unit }
+                                </div>
                             </div>
-                        </div>
-                        <Separator />
-                        <div className="flex flex-col items-center justify-center">
-                            <div className="text-xl opacity-50">Dominant Wave Period</div>
-                            <div>{ currentWave?.dominantWavePeriod } seconds</div>
+                            <Separator />
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="text-base opacity-50 md:text-xl">Dominant Wave Period</div>
+                                <div>{ currentWave?.dominantWavePeriod } seconds</div>
+                            </div>
                         </div>
                     </div>
                 </div>

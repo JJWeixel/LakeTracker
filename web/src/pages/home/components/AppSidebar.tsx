@@ -5,7 +5,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
@@ -37,21 +36,23 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="floating" mobileSide="bottom">
       <SidebarContent className="bg-card">
         <SidebarGroup>
           <SidebarGroupLabel>Units</SidebarGroupLabel>
-          <SidebarGroupAction asChild>
-            <Button variant="ghost" className="size-5 shadow-sm" onClick={handleThemeToggle}>
-              {
-                theme === "light" ?
-                <MoonIcon /> :
-                <SunIcon />
-              }
-            </Button>
-          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <div className="flex w-full justify-center py-2 shadow-sm">
+                  <Button
+                    variant="outline"
+                    className="flex aspect-square size-12 items-center justify-center"
+                    onClick={handleThemeToggle}
+                  >
+                    {theme === "light" ? <MoonIcon /> : <SunIcon />}
+                  </Button>
+                </div>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline" 
                   value={temperatureUnits} 
