@@ -83,13 +83,12 @@ namespace api
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
-
                 options.AddPolicy("AllowProduction", policy =>
-                policy
-                    .WithOrigins("https://jjweixel.github.io", "https://laketracker.us", "https://www.laketracker.us")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    policy
+                        .WithOrigins("https://laketracker.us", "https://www.laketracker.us", "https://jjweixel.github.io")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             });
         }
 
