@@ -6,10 +6,6 @@ const Router = createBrowserRouter([
         path: "/",
         element: <Home/>
     }
-],
-    {
-        basename: import.meta.env.BASE_URL
-    }
-);
+],);
 
 export default Router;
