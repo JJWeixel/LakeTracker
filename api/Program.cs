@@ -84,9 +84,9 @@ namespace api
                         .AllowAnyHeader()
                         .AllowCredentials());
 
-                options.AddPolicy("AllowGithubPages", policy =>
+                options.AddPolicy("AllowProduction", policy =>
                 policy
-                    .WithOrigins("https://jjweixel.github.io")
+                    .WithOrigins("https://jjweixel.github.io", "https://laketracker.us", "https://www.laketracker.us")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
@@ -105,7 +105,7 @@ namespace api
             }
             else 
             {
-                app.UseCors("AllowGithubPages");
+                app.UseCors("AllowProduction");
             }
 
             app.UseHttpsRedirection();
