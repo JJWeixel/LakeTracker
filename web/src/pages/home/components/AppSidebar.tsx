@@ -39,14 +39,14 @@ export function AppSidebar() {
     <Sidebar variant="floating" mobileSide="bottom">
       <SidebarContent className="bg-card">
         <SidebarGroup>
-          <SidebarGroupLabel>Units</SidebarGroupLabel>
+          <SidebarGroupLabel>Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <div className="flex w-full justify-center py-2 shadow-sm">
+                <div className="flex w-full justify-center py-2">
                   <Button
                     variant="outline"
-                    className="flex aspect-square size-12 items-center justify-center"
+                    className="flex w-1/4 items-center justify-center"
                     onClick={handleThemeToggle}
                   >
                     {theme === "light" ? <MoonIcon /> : <SunIcon />}
@@ -54,7 +54,7 @@ export function AppSidebar() {
                 </div>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline" 
+                <ToggleGroup type="single" className="flex w-full py-2" variant="outline" 
                   value={temperatureUnits} 
                   onValueChange={(value) => {
                     if (value) {
@@ -73,7 +73,7 @@ export function AppSidebar() {
                 </ToggleGroup>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline" 
+                <ToggleGroup type="single" className="flex w-full py-2" variant="outline" 
                   value={windUnits} 
                   onValueChange={(value) => {
                     if (value) {
@@ -95,7 +95,7 @@ export function AppSidebar() {
                 </ToggleGroup>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ToggleGroup type="single" className="flex w-full py-2 shadow-sm" variant="outline" 
+                <ToggleGroup type="single" className="flex w-full py-2" variant="outline" 
                   value={heightUnits} 
                   onValueChange={(value) => {
                     if (value) {

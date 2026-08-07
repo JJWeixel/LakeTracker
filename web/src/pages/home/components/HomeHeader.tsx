@@ -39,7 +39,7 @@ const HomeHeader = () => {
     const location = stations.find((station) => station.id === stationId)
 
     return (
-        <div className="z-[1001] sticky top-4 left-0 right-0 mx-auto flex w-5/6 flex-col gap-4 rounded-2xl border bg-card/50 px-4 py-4 drop-shadow-sm backdrop-blur-xl md:px-8">
+        <div className="z-[1001] sticky top-4 left-0 right-0 mx-auto flex w-full flex-col gap-4 rounded-2xl border bg-card/50 px-4 py-4 drop-shadow-sm backdrop-blur-xl md:px-8">
             <div className="flex w-full flex-row items-center gap-4 overflow-hidden">
                 <Waves className="size-10 shrink-0 overflow-hidden md:size-14" />
                 <div className="flex min-w-0 flex-row flex-grow justify-between text-sm md:text-base">

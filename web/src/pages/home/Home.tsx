@@ -10,7 +10,7 @@ import WindCard from "./components/WindCard"
 const Home : React.FC = () => {
 
     return (
-        <SidebarProvider>
+            <SidebarProvider defaultOpen={false}> 
             <AppSidebar />
             <main className="h-full w-full m-4 min-w-0">
                 <SidebarTrigger/>
