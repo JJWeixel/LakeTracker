@@ -31,16 +31,16 @@ const WaveCard : React.FC = () => {
                         <WavePulse periodSeconds={currentWave?.dominantWavePeriod ?? 0} />
                     </div>
                     <div className="flex min-w-0 flex-grow justify-center">
-                        <div className="flex min-w-0 flex-col items-center py-4 text-center text-lg md:text-3xl justify-start gap-3">
+                        <div className="flex min-w-0 flex-col items-center py-4 text-center text-2xl md:text-3xl justify-start gap-3">
                             <div className="flex flex-col items-center justify-center">
-                                <div className="text-base opacity-50 md:text-xl">Height</div>
+                                <div className="text-xl opacity-50 md:text-xl">Height</div>
                                 <div>
                                     { waveHeight } { unit }
                                 </div>
                             </div>
                             <Separator />
                             <div className="flex flex-col items-center justify-center">
-                                <div className="text-base opacity-50 md:text-xl">Dominant Wave Period</div>
+                                <div className="text-xl opacity-50 md:text-xl">Dominant Wave Period</div>
                                 <div>{ currentWave?.dominantWavePeriod } seconds</div>
                             </div>
                         </div>
