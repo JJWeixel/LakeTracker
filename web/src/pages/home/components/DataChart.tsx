@@ -84,7 +84,7 @@ const DataChart = () => {
 
             return {
                 date,
-                temp: weather?.airTemperature ?? null,
+                temp: weather?.waterTemperature ?? null,
                 wind: weather?.windSpeed ?? null,
                 waves: waves?.waveHeight ?? null,
             };

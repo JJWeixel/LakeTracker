@@ -23,7 +23,9 @@ namespace api.Data
             .IsUnique();
 
         modelBuilder.Entity<Station>().HasData(
-            new Station { Id = 1, RegionCode = "cle", RegionLabel = "Cleveland", AlertZoneId = "OHC035", BuoyId = "45176", WeatherStationId = "9063063"}
+            new Station { Id = 1, RegionCode = "cle", RegionLabel = "Cleveland", AlertZoneId = "OHC035", BuoyId = "45176", WeatherStationId = "9063063"},
+            new Station { Id = 2, RegionCode = "tol", RegionLabel = "Toledo", AlertZoneId = "OHC035", BuoyId = "45200", WeatherStationId = "9063085"},
+            new Station { Id = 3, RegionCode = "buf", RegionLabel = "Buffalo", AlertZoneId = "NYZ010", BuoyId = "45005", WeatherStationId = "9063020"}
         );
     }
 }
